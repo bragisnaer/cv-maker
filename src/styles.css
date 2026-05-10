@@ -769,25 +769,212 @@ a:hover {
   color: var(--color-on-dark);
 }
 
-.apps-placeholder {
-  background: var(--color-canvas);
-  border: 1px solid var(--color-hairline);
-  border-radius: var(--radius-lg);
-  padding: 64px 48px;
-  text-align: center;
-  max-width: 480px;
-  box-shadow: var(--elev-1);
+/* ─────────────────────────────────────────────────────────────────
+   Applications tracker
+   ───────────────────────────────────────────────────────────── */
+
+.apps {
+  width: 100%;
+  max-width: 880px;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
 }
-.apps-placeholder__title {
-  font-size: 18px;
+
+.apps__header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+.apps__title {
+  font-size: 22px;
   font-weight: 600;
+  letter-spacing: -0.01em;
   color: var(--color-ink);
-  margin: 0 0 8px;
+  margin: 0 0 4px;
 }
-.apps-placeholder__lead {
+.apps__lead {
   font-size: 14px;
   color: var(--color-slate);
   margin: 0;
+}
+
+.apps__empty {
+  background: var(--color-canvas);
+  border: 1px dashed var(--color-hairline-strong);
+  border-radius: var(--radius-lg);
+  padding: 48px;
+  text-align: center;
+  color: var(--color-slate);
+}
+
+.apps__list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.app-card {
+  background: var(--color-canvas);
+  border: 1px solid var(--color-hairline);
+  border-radius: var(--radius-lg);
+  padding: 16px 18px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.app-card__row {
+  display: flex;
+  gap: 12px;
+}
+.app-card__row--top {
+  align-items: flex-start;
+  justify-content: space-between;
+  flex-wrap: wrap;
+}
+.app-card__row--meta {
+  flex-wrap: wrap;
+  align-items: flex-end;
+}
+
+.app-card__title {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  flex: 1;
+  min-width: 240px;
+}
+.app-card__company,
+.app-card__role {
+  background: transparent;
+  border: none;
+  padding: 0;
+  font: inherit;
+  color: var(--color-ink);
+  width: 100%;
+}
+.app-card__company {
+  font-size: 16px;
+  font-weight: 600;
+}
+.app-card__role {
+  font-size: 13px;
+  color: var(--color-slate);
+}
+.app-card__company:focus,
+.app-card__role:focus {
+  outline: none;
+  background: rgba(79, 60, 219, 0.06);
+  border-radius: 2px;
+}
+
+.app-card__status-wrap {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.app-card__status-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  display: inline-block;
+}
+.app-card__status {
+  height: 30px;
+  padding: 0 24px 0 8px;
+  font: inherit;
+  font-size: 12px;
+  border: 1px solid var(--color-hairline);
+  border-radius: var(--radius-sm);
+  background: var(--color-canvas);
+  color: var(--color-charcoal);
+  cursor: pointer;
+}
+.app-card__delete {
+  height: 30px;
+  width: 30px;
+  padding: 0;
+  font-size: 18px;
+  color: var(--color-steel);
+  border-radius: var(--radius-sm);
+}
+.app-card__delete:hover {
+  color: var(--color-error);
+  background: rgba(179, 38, 30, 0.08);
+}
+
+.app-card__field {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  font-size: 11px;
+  color: var(--color-steel);
+}
+.app-card__field--grow {
+  flex: 1;
+  min-width: 200px;
+}
+.app-card__field input {
+  font: inherit;
+  font-size: 13px;
+  padding: 6px 10px;
+  border: 1px solid var(--color-hairline);
+  border-radius: var(--radius-sm);
+  background: var(--color-canvas);
+  color: var(--color-ink);
+  height: 32px;
+}
+.app-card__field input:focus {
+  outline: 2px solid var(--color-primary);
+  outline-offset: -1px;
+  border-color: transparent;
+}
+
+.app-card__source {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  font-size: 11px;
+  color: var(--color-steel);
+}
+.app-card__source span:last-child {
+  font-size: 13px;
+  color: var(--color-charcoal);
+  height: 32px;
+  display: inline-flex;
+  align-items: center;
+}
+
+.app-card__notes {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+.app-card__notes-label {
+  font-size: 11px;
+  color: var(--color-steel);
+}
+.app-card__notes textarea {
+  font: inherit;
+  font-size: 13px;
+  line-height: 1.5;
+  padding: 8px 10px;
+  border: 1px solid var(--color-hairline);
+  border-radius: var(--radius-sm);
+  background: var(--color-canvas);
+  color: var(--color-ink);
+  resize: vertical;
+}
+.app-card__notes textarea:focus {
+  outline: 2px solid var(--color-primary);
+  outline-offset: -1px;
+  border-color: transparent;
 }
 
 /* ─────────────────────────────────────────────────────────────────

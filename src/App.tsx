@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { Applications } from './components/Applications';
 import { CVDocument } from './components/CVDocument';
 import { CoverLetter } from './components/CoverLetter';
 import { Toolbar } from './components/Toolbar';
@@ -27,7 +28,7 @@ function Editor() {
       <main className="stage">
         {view === 'cv' && <CVDocument data={cv} />}
         {view === 'cover' && <CoverLetter data={cv} />}
-        {view === 'apps' && <ApplicationsPlaceholder />}
+        {view === 'apps' && <Applications />}
       </main>
       {view !== 'apps' && <TweaksPanel />}
     </div>
@@ -56,11 +57,3 @@ function ViewTabs({ view, onChange }: { view: View; onChange: (v: View) => void 
   );
 }
 
-function ApplicationsPlaceholder() {
-  return (
-    <div className="apps-placeholder">
-      <p className="apps-placeholder__title">Applications tracker</p>
-      <p className="apps-placeholder__lead">Coming in the next release.</p>
-    </div>
-  );
-}
