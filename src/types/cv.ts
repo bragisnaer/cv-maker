@@ -1,7 +1,6 @@
 /**
- * CV data shape. Mirrors the v1 SEED_CV schema so legacy profiles
- * can be migrated 1:1. Extend cautiously — every field here is
- * persisted to localStorage.
+ * CV data shape. Extend cautiously — every field here is persisted
+ * to localStorage and travels with exported JSON.
  */
 
 export const HEADSHOT_SHAPES = [

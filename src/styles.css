@@ -122,68 +122,7 @@ a:hover {
 }
 
 /* ─────────────────────────────────────────────────────────────────
-   Splash (placeholder landing). Replaced as v2 takes shape.
-   ───────────────────────────────────────────────────────────── */
-
-.splash {
-  min-height: 100vh;
-  display: grid;
-  place-items: center;
-  padding: var(--space-xxl) var(--space-lg);
-  background: var(--color-canvas);
-}
-
-.splash__inner {
-  max-width: 680px;
-  text-align: left;
-}
-
-.splash__eyebrow {
-  font-family: var(--font-mono);
-  font-size: 12px;
-  font-weight: 500;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
-  color: var(--color-steel);
-  margin: 0 0 var(--space-md);
-}
-
-.splash__title {
-  font-size: clamp(36px, 6vw, 56px);
-  line-height: 1.05;
-  letter-spacing: -0.02em;
-  font-weight: 600;
-  color: var(--color-ink);
-  margin: 0 0 var(--space-md);
-}
-
-.splash__lead {
-  font-size: 18px;
-  line-height: 1.55;
-  color: var(--color-charcoal);
-  margin: 0 0 var(--space-lg);
-  max-width: 56ch;
-}
-
-.splash__note {
-  font-size: 14px;
-  line-height: 1.6;
-  color: var(--color-slate);
-  background: var(--color-surface);
-  border-radius: var(--radius-lg);
-  padding: var(--space-md) var(--space-lg);
-  margin: 0 0 var(--space-xl);
-  max-width: 56ch;
-}
-
-.splash__actions {
-  display: flex;
-  flex-wrap: wrap;
-  gap: var(--space-sm);
-}
-
-/* ─────────────────────────────────────────────────────────────────
-   Buttons (Notion-style sober rectangles, 8px radius — NOT pills).
+   Buttons (sober 8px-radius rectangles)
    ───────────────────────────────────────────────────────────── */
 
 .btn {
@@ -260,7 +199,7 @@ a:hover {
   flex: 1;
   display: flex;
   justify-content: center;
-  padding: 132px 24px 120px;
+  padding: 156px 24px 140px;
 }
 
 /* ─────────────────────────────────────────────────────────────────
@@ -332,29 +271,61 @@ a:hover {
 
 .tweaks {
   position: fixed;
-  bottom: 16px;
-  right: 16px;
+  top: 156px;
+  left: calc(50% + (var(--cv-page-w) / 2) + 16px);
   z-index: 100;
   display: flex;
   flex-direction: column;
-  align-items: flex-end;
+  align-items: flex-start;
   gap: 8px;
+  max-height: calc(100vh - 200px);
 }
 
-.tweaks__toggle {
-  background: var(--color-ink-deep);
-  color: var(--color-on-dark);
-  border: none;
+/* ─────────────────────────────────────────────────────────────────
+   Side-panel toggle (shared by Templates + Tweaks)
+   ───────────────────────────────────────────────────────────── */
+
+.tweaks__toggle,
+.templates-panel__toggle {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  background: var(--color-canvas);
+  color: var(--color-ink);
+  border: 1px solid var(--color-hairline-strong);
   border-radius: var(--radius-md);
-  padding: 8px 14px;
+  padding: 8px 12px 8px 14px;
   font: inherit;
   font-size: 13px;
   font-weight: 500;
   cursor: pointer;
+  box-shadow: var(--elev-1);
+  transition:
+    background-color 120ms ease,
+    border-color 120ms ease,
+    box-shadow 120ms ease,
+    transform 120ms ease;
+}
+.tweaks__toggle:hover,
+.templates-panel__toggle:hover {
+  background: var(--color-surface);
+  border-color: var(--color-primary);
+  color: var(--color-primary);
   box-shadow: var(--elev-2);
 }
-.tweaks__toggle:hover {
-  background: var(--color-charcoal);
+.tweaks__toggle::after,
+.templates-panel__toggle::after {
+  content: '⌃';
+  display: inline-block;
+  font-size: 12px;
+  line-height: 1;
+  color: var(--color-steel);
+  transform: rotate(180deg);
+  transition: transform 150ms ease;
+}
+.tweaks--open .tweaks__toggle::after,
+.templates-panel--open .templates-panel__toggle::after {
+  transform: rotate(0deg);
 }
 
 .tweaks__body {
@@ -381,76 +352,6 @@ a:hover {
   color: var(--color-steel);
   margin: 0 0 10px;
   font-weight: 600;
-}
-
-.tweaks__templates {
-  list-style: none;
-  margin: 0 0 8px;
-  padding: 0;
-  display: flex;
-  flex-direction: column;
-  gap: 4px;
-}
-.tweaks__template {
-  display: flex;
-  flex-direction: column;
-  gap: 2px;
-  text-align: left;
-  width: 100%;
-  padding: 8px 10px;
-  background: var(--color-canvas);
-  border: 1px solid var(--color-hairline);
-  border-radius: var(--radius-sm);
-  cursor: pointer;
-  font: inherit;
-  color: var(--color-charcoal);
-}
-.tweaks__template:hover {
-  background: var(--color-surface);
-}
-.tweaks__template--active {
-  border-color: var(--color-primary);
-  background: rgba(79, 60, 219, 0.05);
-}
-.tweaks__template-name {
-  font-size: 13px;
-  font-weight: 600;
-  color: var(--color-ink);
-}
-.tweaks__template-desc {
-  font-size: 11px;
-  color: var(--color-slate);
-  line-height: 1.4;
-}
-
-.tweaks__hint {
-  font-size: 11px;
-  line-height: 1.5;
-  color: var(--color-steel);
-  margin: 8px 0 0;
-}
-
-.tweaks__select,
-.tweaks__input {
-  width: 100%;
-  height: 32px;
-  padding: 0 10px;
-  font: inherit;
-  font-size: 13px;
-  border: 1px solid var(--color-hairline-strong);
-  border-radius: var(--radius-sm);
-  background: var(--color-canvas);
-  color: var(--color-ink);
-  margin-bottom: 6px;
-}
-.tweaks__input {
-  height: 32px;
-}
-.tweaks__select:focus,
-.tweaks__input:focus {
-  outline: 2px solid var(--color-primary);
-  outline-offset: -1px;
-  border-color: transparent;
 }
 
 .tweaks__swatches {
@@ -809,7 +710,7 @@ a:hover {
 
 .view-tabs {
   position: fixed;
-  top: 72px;
+  top: 92px;
   left: 50%;
   transform: translateX(-50%);
   z-index: 90;
@@ -1188,29 +1089,14 @@ a:hover {
 
 .templates-panel {
   position: fixed;
-  bottom: 16px;
-  left: 16px;
+  top: 156px;
+  right: calc(50% + (var(--cv-page-w) / 2) + 16px);
   z-index: 100;
   display: flex;
   flex-direction: column;
-  align-items: flex-start;
+  align-items: flex-end;
   gap: 8px;
-}
-
-.templates-panel__toggle {
-  background: var(--color-ink-deep);
-  color: var(--color-on-dark);
-  border: none;
-  border-radius: var(--radius-md);
-  padding: 8px 14px;
-  font: inherit;
-  font-size: 13px;
-  font-weight: 500;
-  cursor: pointer;
-  box-shadow: var(--elev-2);
-}
-.templates-panel__toggle:hover {
-  background: var(--color-charcoal);
+  max-height: calc(100vh - 200px);
 }
 
 .templates-panel__body {
@@ -1292,43 +1178,38 @@ a:hover {
 .page-frame {
   position: relative;
 }
-.page-frame > * {
+.page-frame > .cv-page,
+.page-frame > .cl-page {
   position: relative;
   z-index: 1;
 }
-.page-frame::after {
-  content: '';
+
+/* Overlay container clips page-break elements to the document
+   height so the breaks don't leak into the workspace below
+   shorter CVs. */
+.page-frame__breaks {
   position: absolute;
   inset: 0;
   pointer-events: none;
   z-index: 2;
-  background-image: linear-gradient(
-    to bottom,
-    transparent 0,
-    transparent calc(var(--cv-page-h) - 1px),
-    rgba(0, 0, 0, 0.28) calc(var(--cv-page-h) - 1px),
-    rgba(0, 0, 0, 0.28) var(--cv-page-h),
-    transparent var(--cv-page-h)
-  );
-  background-size: 100% var(--cv-page-h);
-  background-repeat: repeat-y;
-  background-position: 0 0;
+  overflow: hidden;
 }
 
-.page-frame__label {
+/* Each .page-break sits at top: var(--cv-page-h) * N. The 28px gap
+   carries the workspace surface colour with shadows on the top and
+   bottom edges, simulating two stacked pages with a margin between
+   them — Word print-preview style. */
+.page-break {
   position: absolute;
-  right: 8px;
-  top: calc(var(--cv-page-h) + 8px);
-  font-family: var(--font-mono);
-  font-size: 10px;
-  letter-spacing: 0.1em;
-  text-transform: uppercase;
-  color: var(--color-stone);
-  background: var(--color-canvas);
-  padding: 2px 8px;
-  border-radius: var(--radius-xs);
-  pointer-events: none;
-  z-index: 3;
+  left: -12px;
+  right: -12px;
+  height: 28px;
+  background: var(--color-surface);
+  box-shadow:
+    0 -4px 8px -2px rgba(15, 15, 15, 0.08),
+    0 4px 8px -2px rgba(15, 15, 15, 0.08),
+    inset 0 1px 0 rgba(15, 15, 15, 0.05),
+    inset 0 -1px 0 rgba(15, 15, 15, 0.05);
 }
 
 /* ─────────────────────────────────────────────────────────────────

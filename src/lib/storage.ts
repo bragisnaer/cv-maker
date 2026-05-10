@@ -59,8 +59,9 @@ export function saveActiveProfile(name: string): void {
 }
 
 /**
- * Initialise profiles on first run, migrating the v1 `cv-data` key
- * if present. Returns the resolved profile map.
+ * Initialise profiles on first run, picking up an older single-CV
+ * `cv-data` key if any visitor still has one. Returns the resolved
+ * profile map.
  */
 export function ensureProfiles(): ProfileMap {
   const existing = loadProfiles();

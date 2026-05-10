@@ -11,9 +11,8 @@ interface CoverLetterProps {
 }
 
 /**
- * Default sender lines if the user hasn't customised them yet.
- * Mirrors the v1 virtual-seed behaviour: derive from CV name +
- * contact, but only persist once the user actually edits.
+ * Default sender lines if the user hasn't customised them yet —
+ * derived from CV name + contact. Persisted only once the user edits.
  */
 function deriveSenderLines(data: CVData): string[] {
   const out: string[] = [];

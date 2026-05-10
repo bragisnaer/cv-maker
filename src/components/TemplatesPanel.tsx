@@ -44,8 +44,7 @@ export function TemplatesPanel() {
           </ul>
           <p className="templates-panel__hint">
             Switching templates keeps every field intact — same data,
-            different rendering. (Stub variants render the Editorial layout
-            for now; distinct renders ship in upcoming releases.)
+            different rendering.
           </p>
         </div>
       )}

@@ -1,13 +1,11 @@
 import type { Template } from '../types/template';
 
 /**
- * Template registry. v1 ships one rendered template (Editorial) but
- * exposes six entries in the picker so we can validate template-
- * switching UX, theming differences, and future per-template tweaks.
- *
- * Stub templates render identically for now — they exist to anchor
- * IDs and names in storage. Each one can be filled in incrementally
- * without breaking saved profiles.
+ * Template registry. Each entry advertises an id, name, default
+ * theme, and a render function. CVDocument owns the visual layer
+ * for now; render() is a hook for templates that need bespoke
+ * markup later. Adding entries here makes them appear in the
+ * Templates picker.
  */
 
 export const TEMPLATES: Template[] = [

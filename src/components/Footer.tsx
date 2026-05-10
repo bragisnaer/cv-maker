@@ -18,8 +18,6 @@ export function Footer() {
           >
             GitHub
           </a>
-          <span className="site-footer__sep">·</span>
-          <a href="/legacy.html">v1 editor</a>
         </nav>
       </div>
     </footer>

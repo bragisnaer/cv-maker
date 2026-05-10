@@ -2,9 +2,8 @@ import type { CVData } from '../types/cv';
 import type { Application } from '../types/application';
 
 /**
- * Fictional first-run CV. Same shape as v1 SEED_CV; identical fields
- * so a v1 export imports cleanly. Replace freely — this is the empty
- * state a brand-new visitor sees.
+ * Fictional first-run CV. The empty state a brand-new visitor sees;
+ * also the fallback for JSON imports that lack newer fields.
  */
 export const SEED_CV: CVData = {
   templateId: 'editorial',

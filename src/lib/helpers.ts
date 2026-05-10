@@ -1,6 +1,6 @@
 /**
  * Deep-merge override into base. Arrays replace, plain objects merge.
- * Mirrors the v1 deepMerge so legacy JSON imports stay compatible.
+ * Used by JSON import so missing fields fall back to the seed shape.
  */
 export function deepMerge<T>(base: T, override: unknown): T {
   if (override == null) return base;

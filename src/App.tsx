@@ -3,6 +3,7 @@ import { Applications } from './components/Applications';
 import { CVDocument } from './components/CVDocument';
 import { CoverLetter } from './components/CoverLetter';
 import { Footer } from './components/Footer';
+import { PageFrame } from './components/PageFrame';
 import { TemplatesPanel } from './components/TemplatesPanel';
 import { Toolbar } from './components/Toolbar';
 import { TweaksPanel } from './components/TweaksPanel';
@@ -29,14 +30,14 @@ function Editor() {
       <ViewTabs view={view} onChange={setView} />
       <main className="stage">
         {view === 'cv' && (
-          <div className="page-frame">
+          <PageFrame>
             <CVDocument data={cv} />
-          </div>
+          </PageFrame>
         )}
         {view === 'cover' && (
-          <div className="page-frame">
+          <PageFrame>
             <CoverLetter data={cv} />
-          </div>
+          </PageFrame>
         )}
         {view === 'apps' && <Applications />}
       </main>
