@@ -1089,6 +1089,152 @@ a:hover {
 }
 
 /* ─────────────────────────────────────────────────────────────────
+   Headshot
+   ───────────────────────────────────────────────────────────── */
+
+.hs {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.hs__frame {
+  position: relative;
+  overflow: hidden;
+  background: color-mix(in srgb, var(--cv-ink) 8%, transparent);
+  flex-shrink: 0;
+  user-select: none;
+  touch-action: none;
+}
+.hs__frame--empty {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: var(--font-mono);
+  font-size: 10px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: color-mix(in srgb, var(--cv-ink) 50%, transparent);
+}
+.hs__frame--editing {
+  cursor: grab;
+  box-shadow: 0 0 0 2px var(--color-primary);
+}
+.hs__frame--editing:active {
+  cursor: grabbing;
+}
+
+.hs__img {
+  position: absolute;
+  left: 0;
+  top: 0;
+  transform-origin: 0 0;
+  pointer-events: none;
+  max-width: none;
+  max-height: none;
+}
+
+.hs__placeholder {
+  pointer-events: none;
+}
+
+.hs__tools {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  font-family: var(--font-sans);
+  font-size: 11px;
+  color: var(--color-charcoal);
+}
+
+.hs__btn {
+  background: var(--color-canvas);
+  color: var(--color-ink);
+  border: 1px solid var(--color-hairline-strong);
+  padding: 4px 10px;
+  font: inherit;
+  font-size: 11px;
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+}
+.hs__btn:hover {
+  background: var(--color-surface);
+}
+.hs__btn--small {
+  padding: 2px 8px;
+  min-width: 24px;
+}
+.hs__btn--active {
+  background: var(--color-primary);
+  color: var(--color-on-dark);
+  border-color: var(--color-primary);
+}
+.hs__btn--primary {
+  background: var(--color-primary);
+  color: var(--color-on-dark);
+  border-color: var(--color-primary);
+}
+.hs__btn--primary:hover {
+  background: var(--color-primary-pressed);
+  border-color: var(--color-primary-pressed);
+}
+.hs__btn--danger {
+  color: var(--color-error);
+}
+.hs__btn--danger:hover {
+  background: rgba(179, 38, 30, 0.08);
+}
+
+.hs__shapes {
+  display: flex;
+  gap: 3px;
+  flex-wrap: wrap;
+}
+.hs__shape {
+  width: 22px;
+  height: 22px;
+  padding: 0;
+  border: 1px solid var(--color-hairline-strong);
+  background: var(--color-canvas);
+  color: var(--color-charcoal);
+  font-size: 10px;
+  font-weight: 600;
+  border-radius: var(--radius-xs);
+  cursor: pointer;
+}
+.hs__shape:hover {
+  background: var(--color-surface);
+}
+.hs__shape--active {
+  border-color: var(--color-primary);
+  color: var(--color-primary);
+  background: rgba(79, 60, 219, 0.06);
+}
+
+.hs__slider {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 11px;
+}
+.hs__slider input {
+  flex: 1;
+  accent-color: var(--color-primary);
+  min-width: 0;
+}
+
+.hs__align {
+  display: flex;
+  gap: 3px;
+}
+
+.hs__row {
+  display: flex;
+  gap: 3px;
+  flex-wrap: wrap;
+}
+
+/* ─────────────────────────────────────────────────────────────────
    Inline editing affordances
    ───────────────────────────────────────────────────────────── */
 

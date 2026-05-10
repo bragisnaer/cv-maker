@@ -13,6 +13,7 @@ import type {
 } from '../types/cv';
 import { useCVStore } from '../state/useCVStore';
 import { EditableText } from './EditableText';
+import { Headshot } from './Headshot';
 import { AddRow, RemoveButton } from './EditChrome';
 import { A4_HEIGHT_PX, A4_WIDTH_PX } from '../lib/constants';
 
@@ -43,8 +44,10 @@ export function CVDocument({ data, readOnly }: CVDocumentProps) {
    ───────────────────────────────────────────────────────────── */
 
 function CVSidebar({ data, readOnly }: { data: CVData; readOnly?: boolean }) {
+  const { active } = useCVStore();
   return (
     <aside className="cv-sidebar">
+      <Headshot config={data.headshot} profileName={active} readOnly={readOnly} />
       <SidebarHeader data={data} readOnly={readOnly} />
       <SidebarContact data={data} readOnly={readOnly} />
       {data.sidebar
