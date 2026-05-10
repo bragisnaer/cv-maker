@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { Applications } from './components/Applications';
 import { CVDocument } from './components/CVDocument';
 import { CoverLetter } from './components/CoverLetter';
+import { Footer } from './components/Footer';
 import { Toolbar } from './components/Toolbar';
 import { TweaksPanel } from './components/TweaksPanel';
 import { CVStoreProvider, useCVStore } from './state/useCVStore';
@@ -31,6 +32,7 @@ function Editor() {
         {view === 'apps' && <Applications />}
       </main>
       {view !== 'apps' && <TweaksPanel />}
+      <Footer />
     </div>
   );
 }
