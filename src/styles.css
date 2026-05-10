@@ -199,7 +199,7 @@ a:hover {
   flex: 1;
   display: flex;
   justify-content: center;
-  padding: 132px 24px 80px;
+  padding: 128px 24px 80px;
 }
 
 /* Inspector width is exposed as a CSS variable so the centred chrome
@@ -233,21 +233,24 @@ a:hover {
 
 .toolbar {
   position: fixed;
-  top: 12px;
-  left: 50%;
-  transform: translateX(calc(-50% - var(--inspector-w, 0px) / 2));
+  top: 0;
+  left: 0;
+  right: var(--inspector-w, 0px);
+  transform: none;
   z-index: 100;
   background: var(--color-canvas);
-  border: 1px solid var(--color-hairline);
-  border-radius: var(--radius-lg);
-  box-shadow: var(--elev-2);
-  padding: 8px;
+  border: none;
+  border-bottom: 1px solid var(--color-hairline);
+  border-radius: 0;
+  box-shadow: none;
+  padding: 0 20px;
+  height: 56px;
   display: flex;
   align-items: center;
   gap: 4px;
   font-size: 14px;
-  max-width: calc(100vw - 24px);
-  flex-wrap: wrap;
+  flex-wrap: nowrap;
+  overflow-x: auto;
 }
 
 .toolbar__group {
@@ -300,7 +303,7 @@ a:hover {
 
 .inspector {
   position: fixed;
-  top: 96px;
+  top: 0;
   right: 0;
   bottom: 0;
   width: 320px;
@@ -605,21 +608,28 @@ a:hover {
   gap: 8px;
 }
 .cv-block__title {
-  font-size: 9.5px;
-  letter-spacing: 0.12em;
+  /* Sidebar block title — eyebrow style, deliberately quiet but
+     readable. 10.5px is the floor for printable label type. */
+  font-size: 10.5px;
+  letter-spacing: 0.1em;
   text-transform: uppercase;
   font-weight: 600;
   margin: 0;
   color: var(--cv-ink);
-  opacity: 0.75;
+  opacity: 0.7;
 }
 .cv-block__title--main {
+  /* Main column section header — anchors the section. Sized larger
+     than nested H3 (12.5px company name) and H4 (role title 11px)
+     so the document hierarchy is visually correct. */
   color: var(--cv-ink);
   opacity: 1;
-  font-size: 11px;
+  font-size: 14px;
+  letter-spacing: -0.005em;
+  text-transform: none;
   border-bottom: 1px solid color-mix(in srgb, var(--cv-ink) 22%, transparent);
-  padding-bottom: 6px;
-  margin-bottom: 12px;
+  padding-bottom: 8px;
+  margin-bottom: 14px;
 }
 
 .cv-contact {
@@ -816,31 +826,39 @@ a:hover {
 
 .view-tabs {
   position: fixed;
-  top: 92px;
-  left: 50%;
-  transform: translateX(calc(-50% - var(--inspector-w, 0px) / 2));
+  top: 56px;
+  left: 0;
+  right: var(--inspector-w, 0px);
+  transform: none;
   z-index: 90;
   display: flex;
+  align-items: center;
+  justify-content: center;
   gap: 4px;
   background: var(--color-canvas);
-  border: 1px solid var(--color-hairline);
-  border-radius: var(--radius-full);
-  padding: 4px;
-  box-shadow: var(--elev-1);
+  border: none;
+  border-bottom: 1px solid var(--color-hairline);
+  border-radius: 0;
+  padding: 0 20px;
+  height: 48px;
+  box-shadow: none;
 }
 
 .view-tab {
+  height: 36px;
+  padding: 0 18px;
   background: transparent;
   border: none;
-  padding: 6px 14px;
   font: inherit;
-  font-size: 13px;
+  font-size: 14px;
   font-weight: 500;
   color: var(--color-steel);
-  border-radius: var(--radius-full);
+  border-radius: var(--radius-md);
   cursor: pointer;
+  transition: background-color 120ms ease, color 120ms ease;
 }
 .view-tab:hover {
+  background: var(--color-surface);
   color: var(--color-ink);
 }
 .view-tab--active {
@@ -848,6 +866,7 @@ a:hover {
   color: var(--color-on-dark);
 }
 .view-tab--active:hover {
+  background: var(--color-charcoal);
   color: var(--color-on-dark);
 }
 
@@ -1079,16 +1098,22 @@ a:hover {
   gap: 18px;
 }
 
-/* Vertical accent strip pulled from the CV theme — keeps the cover
-   letter visually tied to the CV's chosen palette. */
+/* Vertical accent strip pulled from the CV theme. Two-stop gradient
+   (ink → side) reads as the same palette as the CV's sidebar, so the
+   cover letter and the CV feel like one document — and it stays
+   visible even when theme.side is near-white. */
 .cl-page::before {
   content: '';
   position: absolute;
   top: 0;
   bottom: 0;
   left: 0;
-  width: 56px;
-  background: var(--cv-side, var(--color-surface));
+  width: 64px;
+  background: linear-gradient(
+    180deg,
+    var(--cv-ink, var(--color-charcoal)) 0%,
+    var(--cv-side, var(--color-surface)) 12%
+  );
   pointer-events: none;
 }
 
