@@ -1,7 +1,12 @@
+import { useState } from 'react';
 import { CVDocument } from './components/CVDocument';
+import { CoverLetter } from './components/CoverLetter';
 import { Toolbar } from './components/Toolbar';
 import { TweaksPanel } from './components/TweaksPanel';
 import { CVStoreProvider, useCVStore } from './state/useCVStore';
+import { classNames } from './lib/helpers';
+
+type View = 'cv' | 'cover' | 'apps';
 
 export function App() {
   return (
@@ -13,13 +18,49 @@ export function App() {
 
 function Editor() {
   const { cv } = useCVStore();
+  const [view, setView] = useState<View>('cv');
+
   return (
     <div className="app">
       <Toolbar />
+      <ViewTabs view={view} onChange={setView} />
       <main className="stage">
-        <CVDocument data={cv} />
+        {view === 'cv' && <CVDocument data={cv} />}
+        {view === 'cover' && <CoverLetter data={cv} />}
+        {view === 'apps' && <ApplicationsPlaceholder />}
       </main>
-      <TweaksPanel />
+      {view !== 'apps' && <TweaksPanel />}
+    </div>
+  );
+}
+
+function ViewTabs({ view, onChange }: { view: View; onChange: (v: View) => void }) {
+  const tabs: Array<{ id: View; label: string }> = [
+    { id: 'cv', label: 'CV' },
+    { id: 'cover', label: 'Cover letter' },
+    { id: 'apps', label: 'Applications' },
+  ];
+  return (
+    <nav className="view-tabs screen-only" aria-label="Document">
+      {tabs.map((t) => (
+        <button
+          key={t.id}
+          type="button"
+          className={classNames('view-tab', view === t.id && 'view-tab--active')}
+          onClick={() => onChange(t.id)}
+        >
+          {t.label}
+        </button>
+      ))}
+    </nav>
+  );
+}
+
+function ApplicationsPlaceholder() {
+  return (
+    <div className="apps-placeholder">
+      <p className="apps-placeholder__title">Applications tracker</p>
+      <p className="apps-placeholder__lead">Coming in the next release.</p>
     </div>
   );
 }

@@ -729,6 +729,179 @@ a:hover {
 }
 
 /* ─────────────────────────────────────────────────────────────────
+   View tabs (CV / Cover / Apps)
+   ───────────────────────────────────────────────────────────── */
+
+.view-tabs {
+  position: fixed;
+  top: 64px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 90;
+  display: flex;
+  gap: 4px;
+  background: var(--color-canvas);
+  border: 1px solid var(--color-hairline);
+  border-radius: var(--radius-full);
+  padding: 4px;
+  box-shadow: var(--elev-1);
+}
+
+.view-tab {
+  background: transparent;
+  border: none;
+  padding: 6px 14px;
+  font: inherit;
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--color-steel);
+  border-radius: var(--radius-full);
+  cursor: pointer;
+}
+.view-tab:hover {
+  color: var(--color-ink);
+}
+.view-tab--active {
+  background: var(--color-ink-deep);
+  color: var(--color-on-dark);
+}
+.view-tab--active:hover {
+  color: var(--color-on-dark);
+}
+
+.apps-placeholder {
+  background: var(--color-canvas);
+  border: 1px solid var(--color-hairline);
+  border-radius: var(--radius-lg);
+  padding: 64px 48px;
+  text-align: center;
+  max-width: 480px;
+  box-shadow: var(--elev-1);
+}
+.apps-placeholder__title {
+  font-size: 18px;
+  font-weight: 600;
+  color: var(--color-ink);
+  margin: 0 0 8px;
+}
+.apps-placeholder__lead {
+  font-size: 14px;
+  color: var(--color-slate);
+  margin: 0;
+}
+
+/* ─────────────────────────────────────────────────────────────────
+   Cover letter (A4)
+   ───────────────────────────────────────────────────────────── */
+
+.cl-page {
+  width: var(--cv-page-w);
+  min-height: var(--cv-page-h);
+  background: var(--color-canvas);
+  box-shadow: var(--elev-3);
+  padding: 80px 90px;
+  font-family: var(--font-sans);
+  color: var(--color-ink);
+  font-size: 11px;
+  line-height: 1.55;
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+}
+
+.cl-sender__list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  text-align: right;
+}
+.cl-sender__row {
+  display: flex;
+  justify-content: flex-end;
+  align-items: baseline;
+  gap: 6px;
+}
+.cl-sender__tools {
+  display: inline-flex;
+  gap: 2px;
+  opacity: 0;
+  transition: opacity 100ms ease;
+}
+.cl-sender__row:hover .cl-sender__tools,
+.cl-sender__row:focus-within .cl-sender__tools {
+  opacity: 1;
+}
+.cl-sender__tools button {
+  width: 18px;
+  height: 18px;
+  padding: 0;
+  border: 1px solid var(--color-hairline);
+  background: var(--color-canvas);
+  color: var(--color-steel);
+  border-radius: var(--radius-xs);
+  font-size: 11px;
+  cursor: pointer;
+}
+.cl-sender__tools button:hover:not(:disabled) {
+  background: var(--color-surface);
+  color: var(--color-ink);
+}
+.cl-sender__tools button:disabled {
+  opacity: 0.3;
+  cursor: not-allowed;
+}
+.cl-sender__tools .cv-remove {
+  position: static;
+  opacity: 1;
+}
+
+.cl-date {
+  color: var(--color-slate);
+}
+
+.cl-recipient {
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+  margin-top: 12px;
+}
+
+.cl-subject {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--color-ink);
+  margin: 8px 0 0;
+}
+
+.cl-salutation {
+  margin: 12px 0 0;
+}
+
+.cl-body {
+  font-size: 11px;
+  line-height: 1.65;
+  white-space: pre-wrap;
+  margin: 6px 0 0;
+  flex: 1;
+}
+
+.cl-signoff {
+  margin-top: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 28px;
+}
+.cl-signoff p {
+  margin: 0;
+}
+.cl-signname {
+  font-weight: 600;
+}
+
+/* ─────────────────────────────────────────────────────────────────
    Inline editing affordances
    ───────────────────────────────────────────────────────────── */
 
