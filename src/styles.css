@@ -5,10 +5,10 @@
    ───────────────────────────────────────────────────────────── */
 
 :root {
-  /* Brand & primary */
-  --color-primary: #5046e5;
-  --color-primary-pressed: #3f37bc;
-  --color-primary-deep: #2e2693;
+  /* Brand & primary — indigo shift, distinct from Notion purple */
+  --color-primary: #4f3cdb;
+  --color-primary-pressed: #3d2eba;
+  --color-primary-deep: #2c1f8a;
 
   /* Brand navy (hero bands, deep surfaces) */
   --color-brand-navy: #0f1535;
