@@ -3,6 +3,7 @@ import { Applications } from './components/Applications';
 import { CVDocument } from './components/CVDocument';
 import { CoverLetter } from './components/CoverLetter';
 import { Footer } from './components/Footer';
+import { TemplatesPanel } from './components/TemplatesPanel';
 import { Toolbar } from './components/Toolbar';
 import { TweaksPanel } from './components/TweaksPanel';
 import { CVStoreProvider, useCVStore } from './state/useCVStore';
@@ -27,10 +28,19 @@ function Editor() {
       <Toolbar />
       <ViewTabs view={view} onChange={setView} />
       <main className="stage">
-        {view === 'cv' && <CVDocument data={cv} />}
-        {view === 'cover' && <CoverLetter data={cv} />}
+        {view === 'cv' && (
+          <div className="page-frame">
+            <CVDocument data={cv} />
+          </div>
+        )}
+        {view === 'cover' && (
+          <div className="page-frame">
+            <CoverLetter data={cv} />
+          </div>
+        )}
         {view === 'apps' && <Applications />}
       </main>
+      {view !== 'apps' && <TemplatesPanel />}
       {view !== 'apps' && <TweaksPanel />}
       <Footer />
     </div>

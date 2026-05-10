@@ -2,22 +2,6 @@ import { useState } from 'react';
 import { useCVStore } from '../state/useCVStore';
 import { COLOR_SCHEMES } from '../lib/constants';
 import { classNames } from '../lib/helpers';
-import { TEMPLATES } from '../templates/registry';
-
-const COMMON_LANGUAGES = [
-  'English',
-  'Dansk',
-  'Deutsch',
-  'Español',
-  'Français',
-  'Italiano',
-  'Nederlands',
-  'Norsk',
-  'Polski',
-  'Português',
-  'Svenska',
-  'Íslenska',
-];
 
 export function TweaksPanel() {
   const { cv, updatePath } = useCVStore();
@@ -41,8 +25,6 @@ export function TweaksPanel() {
     updatePath(['sidebar'], next);
   }
 
-  const knownLanguage = COMMON_LANGUAGES.includes(cv.language);
-
   return (
     <aside
       className={classNames('tweaks', open && 'tweaks--open')}
@@ -59,65 +41,6 @@ export function TweaksPanel() {
 
       {open && (
         <div className="tweaks__body">
-          <section className="tweaks__group">
-            <h3 className="tweaks__title">Template</h3>
-            <ul className="tweaks__templates">
-              {TEMPLATES.map((t) => (
-                <li key={t.id}>
-                  <button
-                    type="button"
-                    className={classNames(
-                      'tweaks__template',
-                      cv.templateId === t.id && 'tweaks__template--active',
-                    )}
-                    onClick={() => updatePath(['templateId'], t.id)}
-                    title={t.description}
-                  >
-                    <span className="tweaks__template-name">{t.name}</span>
-                    <span className="tweaks__template-desc">{t.description}</span>
-                  </button>
-                </li>
-              ))}
-            </ul>
-            <p className="tweaks__hint">
-              Switching templates keeps every field intact — same data,
-              different rendering.
-            </p>
-          </section>
-
-          <section className="tweaks__group">
-            <h3 className="tweaks__title">Language</h3>
-            <select
-              className="tweaks__select"
-              value={knownLanguage ? cv.language : '__custom'}
-              onChange={(e) => {
-                const v = e.target.value;
-                if (v === '__custom') return;
-                updatePath(['language'], v);
-              }}
-            >
-              {COMMON_LANGUAGES.map((l) => (
-                <option key={l} value={l}>
-                  {l}
-                </option>
-              ))}
-              {!knownLanguage && (
-                <option value="__custom">{cv.language || '(custom)'}</option>
-              )}
-            </select>
-            <input
-              className="tweaks__input"
-              type="text"
-              value={cv.language}
-              onChange={(e) => updatePath(['language'], e.target.value)}
-              placeholder="Or type a custom language"
-            />
-            <p className="tweaks__hint">
-              The language label travels with this profile. Use the toolbar's
-              Save as… to keep multiple language versions of the same CV.
-            </p>
-          </section>
-
           <section className="tweaks__group">
             <h3 className="tweaks__title">Colour scheme</h3>
             <div className="tweaks__swatches">

@@ -148,8 +148,12 @@ export function Headshot({ config, profileName, readOnly }: HeadshotProps) {
     clipPath: SHAPE_CLIP[config.shape],
   };
 
+  // Drive cross-axis alignment of the FRAME (and tools) inside the
+  // .hs flex column. Using align-items here, not align-self on the
+  // wrapper — the wrapper stretches full sidebar width so tools and
+  // frame have horizontal slack to slide within.
   const alignStyle: CSSProperties = {
-    alignSelf:
+    alignItems:
       config.align === 'center'
         ? 'center'
         : config.align === 'right'

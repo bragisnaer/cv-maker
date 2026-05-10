@@ -43,6 +43,8 @@ export function CoverLetter({ data, readOnly }: CoverLetterProps) {
   const cssVars: CSSProperties & Record<string, string> = {
     '--cv-page-w': `${A4_WIDTH_PX}px`,
     '--cv-page-h': `${A4_HEIGHT_PX}px`,
+    '--cv-side': data.theme.side,
+    '--cv-ink': data.theme.ink,
   };
 
   function moveLine(i: number, dir: -1 | 1) {
