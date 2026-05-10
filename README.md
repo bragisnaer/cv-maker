@@ -4,11 +4,28 @@ Free, open-source CV builder. Edit a clean A4 CV in your browser, switch templat
 
 ## Status
 
-Pre-release. v1 baseline is a single self-contained `index.html` (React via CDN). A Vite + TypeScript refactor with multiple templates is in progress.
+Pre-release. v2 is being built on Vite + React + TypeScript. The original
+single-file v1 is preserved at `public/legacy.html` and is reachable in the
+deployed app at `/legacy.html`.
 
 ## Run locally
 
-Open `index.html` in any modern browser. No build step, no server, no install.
+Requires Node 20 or later.
+
+```bash
+npm install
+npm run dev
+```
+
+The dev server runs at `http://localhost:5173`. The legacy v1 editor is
+available at `http://localhost:5173/legacy.html`.
+
+## Build
+
+```bash
+npm run build
+npm run preview
+```
 
 ## Roadmap
 
