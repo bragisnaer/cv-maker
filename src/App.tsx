@@ -3,10 +3,9 @@ import { Applications } from './components/Applications';
 import { CVDocument } from './components/CVDocument';
 import { CoverLetter } from './components/CoverLetter';
 import { Footer } from './components/Footer';
+import { Inspector } from './components/Inspector';
 import { PageFrame } from './components/PageFrame';
-import { TemplatesPanel } from './components/TemplatesPanel';
 import { Toolbar } from './components/Toolbar';
-import { TweaksPanel } from './components/TweaksPanel';
 import { CVStoreProvider, useCVStore } from './state/useCVStore';
 import { classNames } from './lib/helpers';
 
@@ -25,7 +24,7 @@ function Editor() {
   const [view, setView] = useState<View>('cv');
 
   return (
-    <div className="app">
+    <div className={classNames('app', view !== 'apps' && 'app--with-inspector')}>
       <Toolbar />
       <ViewTabs view={view} onChange={setView} />
       <main className="stage">
@@ -41,8 +40,7 @@ function Editor() {
         )}
         {view === 'apps' && <Applications />}
       </main>
-      {view !== 'apps' && <TemplatesPanel />}
-      {view !== 'apps' && <TweaksPanel />}
+      {view !== 'apps' && <Inspector />}
       <Footer />
     </div>
   );
@@ -69,4 +67,3 @@ function ViewTabs({ view, onChange }: { view: View; onChange: (v: View) => void 
     </nav>
   );
 }
-

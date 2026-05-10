@@ -199,7 +199,32 @@ a:hover {
   flex: 1;
   display: flex;
   justify-content: center;
-  padding: 156px 24px 140px;
+  padding: 132px 24px 80px;
+}
+
+/* Inspector width is exposed as a CSS variable so the centred chrome
+   (toolbar, view-tabs) and the stage canvas can shift left by the
+   right amount when the inspector is mounted. */
+.app {
+  --inspector-w: 0px;
+}
+.app--with-inspector {
+  --inspector-w: 320px;
+}
+.app--with-inspector .stage {
+  padding-right: calc(var(--inspector-w) + 24px);
+}
+
+@media (max-width: 1279px) {
+  /* Hide the inspector on viewports too narrow to fit it alongside
+     the A4 page. The CV stays editable; controls fall back to the
+     toolbar's profile / language / reset actions. */
+  .app--with-inspector {
+    --inspector-w: 0px;
+  }
+  .app--with-inspector .inspector {
+    display: none;
+  }
 }
 
 /* ─────────────────────────────────────────────────────────────────
@@ -210,7 +235,7 @@ a:hover {
   position: fixed;
   top: 12px;
   left: 50%;
-  transform: translateX(-50%);
+  transform: translateX(calc(-50% - var(--inspector-w, 0px) / 2));
   z-index: 100;
   background: var(--color-canvas);
   border: 1px solid var(--color-hairline);
@@ -269,145 +294,226 @@ a:hover {
    Tweaks panel (bottom-right floating)
    ───────────────────────────────────────────────────────────── */
 
-.tweaks {
-  position: fixed;
-  top: 156px;
-  left: calc(50% + (var(--cv-page-w) / 2) + 16px);
-  z-index: 100;
-  display: flex;
-  flex-direction: column;
-  align-items: flex-start;
-  gap: 8px;
-  max-height: calc(100vh - 200px);
-}
-
 /* ─────────────────────────────────────────────────────────────────
-   Side-panel toggle (shared by Templates + Tweaks)
+   Inspector — persistent right-side editor panel
    ───────────────────────────────────────────────────────────── */
 
-.tweaks__toggle,
-.templates-panel__toggle {
-  display: inline-flex;
-  align-items: center;
-  gap: 8px;
+.inspector {
+  position: fixed;
+  top: 96px;
+  right: 0;
+  bottom: 0;
+  width: 320px;
   background: var(--color-canvas);
-  color: var(--color-ink);
-  border: 1px solid var(--color-hairline-strong);
-  border-radius: var(--radius-md);
-  padding: 8px 12px 8px 14px;
+  border-left: 1px solid var(--color-hairline);
+  z-index: 80;
+  overflow-y: auto;
+}
+
+.inspector__inner {
+  display: flex;
+  flex-direction: column;
+}
+
+.inspector__section {
+  border-bottom: 1px solid var(--color-hairline);
+}
+
+.inspector__header {
+  display: flex;
+  width: 100%;
+  align-items: center;
+  justify-content: space-between;
+  background: transparent;
+  border: none;
+  padding: 14px 20px;
   font: inherit;
-  font-size: 13px;
-  font-weight: 500;
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--color-charcoal);
   cursor: pointer;
-  box-shadow: var(--elev-1);
-  transition:
-    background-color 120ms ease,
-    border-color 120ms ease,
-    box-shadow 120ms ease,
-    transform 120ms ease;
+  transition: background-color 120ms ease;
 }
-.tweaks__toggle:hover,
-.templates-panel__toggle:hover {
+.inspector__header:hover {
   background: var(--color-surface);
-  border-color: var(--color-primary);
-  color: var(--color-primary);
-  box-shadow: var(--elev-2);
 }
-.tweaks__toggle::after,
-.templates-panel__toggle::after {
-  content: '⌃';
-  display: inline-block;
+
+.inspector__chevron {
   font-size: 12px;
   line-height: 1;
   color: var(--color-steel);
   transform: rotate(180deg);
   transition: transform 150ms ease;
 }
-.tweaks--open .tweaks__toggle::after,
-.templates-panel--open .templates-panel__toggle::after {
+.inspector__section--open .inspector__chevron {
   transform: rotate(0deg);
 }
 
-.tweaks__body {
+.inspector__body {
+  padding: 0 20px 16px;
+}
+
+/* Template thumbnails — 2-column grid of mini A4 previews */
+.tmpl-grid {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+}
+
+.tmpl-card {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  padding: 6px 6px 8px;
   background: var(--color-canvas);
   border: 1px solid var(--color-hairline);
-  border-radius: var(--radius-lg);
-  box-shadow: var(--elev-2);
-  padding: 16px;
-  width: 280px;
-  max-height: 70vh;
-  overflow-y: auto;
+  border-radius: var(--radius-md);
+  cursor: pointer;
+  font: inherit;
+  text-align: left;
+  transition:
+    border-color 120ms ease,
+    background-color 120ms ease;
+}
+.tmpl-card:hover {
+  border-color: var(--color-hairline-strong);
+}
+.tmpl-card--active {
+  border-color: var(--color-primary);
+  border-width: 2px;
+  padding: 5px 5px 7px;
 }
 
-.tweaks__group + .tweaks__group {
-  margin-top: 16px;
-  padding-top: 16px;
-  border-top: 1px solid var(--color-hairline);
-}
-
-.tweaks__title {
+.tmpl-card__name {
   font-size: 11px;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
-  color: var(--color-steel);
-  margin: 0 0 10px;
-  font-weight: 600;
+  font-weight: 500;
+  color: var(--color-charcoal);
+  padding: 0 2px;
 }
 
-.tweaks__swatches {
+.tmpl-thumb {
+  display: grid;
+  grid-template-columns: 36% 1fr;
+  height: 110px;
+  border-radius: var(--radius-xs);
+  overflow: hidden;
+  background: #ffffff;
+}
+.tmpl-thumb__side {
+  background: var(--thumb-side);
+  padding: 8px 6px 6px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+}
+.tmpl-thumb__avatar {
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  background: color-mix(in srgb, var(--thumb-ink) 35%, transparent);
+}
+.tmpl-thumb__main {
+  background: #ffffff;
+  padding: 8px 6px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+.tmpl-thumb__line {
+  height: 2px;
+  border-radius: 1px;
+}
+.tmpl-thumb__line--side {
+  width: 100%;
+  background: color-mix(in srgb, var(--thumb-ink) 25%, transparent);
+}
+.tmpl-thumb__line--main {
+  width: 100%;
+  background: color-mix(in srgb, var(--thumb-ink) 30%, transparent);
+}
+.tmpl-thumb__line--bold {
+  height: 4px;
+  background: color-mix(in srgb, var(--thumb-ink) 70%, transparent);
+}
+.tmpl-thumb__line--short {
+  width: 60%;
+}
+
+/* Theme swatches — circles row */
+.theme-swatches {
   display: flex;
   flex-wrap: wrap;
-  gap: 6px;
+  gap: 8px;
 }
-
-.swatch {
-  width: 28px;
-  height: 28px;
-  border-radius: var(--radius-sm);
+.theme-swatch {
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
   border: 2px solid transparent;
+  background:
+    linear-gradient(135deg, var(--swatch-side) 0 50%, var(--swatch-ink) 50% 100%);
   cursor: pointer;
   padding: 0;
+  position: relative;
+  transition:
+    transform 120ms ease,
+    box-shadow 120ms ease;
 }
-.swatch:hover {
-  outline: 1px solid var(--color-hairline-strong);
+.theme-swatch:hover {
+  transform: scale(1.08);
+  box-shadow: 0 0 0 2px var(--color-canvas), 0 0 0 3px var(--color-hairline-strong);
 }
-.swatch--active {
-  border-color: var(--color-primary);
+.theme-swatch--active {
+  box-shadow: 0 0 0 2px var(--color-canvas), 0 0 0 4px var(--color-primary);
 }
 
-.tweaks__sections {
+/* Layout controls — sidebar visibility + reorder */
+.layout-list {
   list-style: none;
   margin: 0;
   padding: 0;
   display: flex;
   flex-direction: column;
-  gap: 4px;
+  gap: 2px;
 }
 
-.tweaks__section {
+.layout-row {
   display: flex;
   align-items: center;
   justify-content: space-between;
+  padding: 6px 0;
   font-size: 13px;
   color: var(--color-charcoal);
-  padding: 4px 0;
 }
 
-.tweaks__check {
+.layout-row__check {
   display: flex;
   align-items: center;
   gap: 8px;
   cursor: pointer;
+  flex: 1;
+  min-width: 0;
 }
-.tweaks__check input {
+.layout-row__check input {
   accent-color: var(--color-primary);
 }
+.layout-row__check span {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
 
-.tweaks__reorder {
+.layout-row__reorder {
   display: flex;
   gap: 2px;
 }
-.tweaks__reorder button {
+.layout-row__reorder button {
   width: 24px;
   height: 24px;
   border: 1px solid var(--color-hairline);
@@ -417,11 +523,11 @@ a:hover {
   color: var(--color-steel);
   cursor: pointer;
 }
-.tweaks__reorder button:hover:not(:disabled) {
+.layout-row__reorder button:hover:not(:disabled) {
   background: var(--color-surface);
   color: var(--color-ink);
 }
-.tweaks__reorder button:disabled {
+.layout-row__reorder button:disabled {
   opacity: 0.3;
   cursor: not-allowed;
 }
@@ -712,7 +818,7 @@ a:hover {
   position: fixed;
   top: 92px;
   left: 50%;
-  transform: translateX(-50%);
+  transform: translateX(calc(-50% - var(--inspector-w, 0px) / 2));
   z-index: 90;
   display: flex;
   gap: 4px;
@@ -1084,109 +1190,29 @@ a:hover {
 }
 
 /* ─────────────────────────────────────────────────────────────────
-   Templates panel (bottom-left, mirrors Tweaks)
-   ───────────────────────────────────────────────────────────── */
-
-.templates-panel {
-  position: fixed;
-  top: 156px;
-  right: calc(50% + (var(--cv-page-w) / 2) + 16px);
-  z-index: 100;
-  display: flex;
-  flex-direction: column;
-  align-items: flex-end;
-  gap: 8px;
-  max-height: calc(100vh - 200px);
-}
-
-.templates-panel__body {
-  background: var(--color-canvas);
-  border: 1px solid var(--color-hairline);
-  border-radius: var(--radius-lg);
-  box-shadow: var(--elev-2);
-  padding: 16px;
-  width: 320px;
-  max-height: 70vh;
-  overflow-y: auto;
-}
-
-.templates-panel__title {
-  font-size: 11px;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
-  color: var(--color-steel);
-  margin: 0 0 10px;
-  font-weight: 600;
-}
-
-.templates-panel__list {
-  list-style: none;
-  margin: 0;
-  padding: 0;
-  display: flex;
-  flex-direction: column;
-  gap: 6px;
-}
-
-.templates-panel__item {
-  display: flex;
-  flex-direction: column;
-  gap: 3px;
-  text-align: left;
-  width: 100%;
-  padding: 10px 12px;
-  background: var(--color-canvas);
-  border: 1px solid var(--color-hairline);
-  border-radius: var(--radius-md);
-  cursor: pointer;
-  font: inherit;
-  color: var(--color-charcoal);
-}
-.templates-panel__item:hover {
-  background: var(--color-surface);
-  border-color: var(--color-hairline-strong);
-}
-.templates-panel__item--active {
-  border-color: var(--color-primary);
-  background: rgba(79, 60, 219, 0.05);
-}
-
-.templates-panel__name {
-  font-size: 13px;
-  font-weight: 600;
-  color: var(--color-ink);
-}
-.templates-panel__desc {
-  font-size: 11px;
-  color: var(--color-slate);
-  line-height: 1.45;
-}
-
-.templates-panel__hint {
-  font-size: 11px;
-  line-height: 1.5;
-  color: var(--color-steel);
-  margin: 12px 0 0;
-  padding-top: 10px;
-  border-top: 1px solid var(--color-hairline);
-}
-
-/* ─────────────────────────────────────────────────────────────────
-   Page-break overlay (visual A4 boundaries)
+   Page-frame (A4 page boundary visualisation)
    ───────────────────────────────────────────────────────────── */
 
 .page-frame {
   position: relative;
+  /* Snap to a whole multiple of A4. PageFrame measures content and
+     sets --page-count; cv-page and cl-page consume the same value
+     via min-height so empty space below short content reads as a
+     real (empty) second page. */
+  min-height: calc(var(--cv-page-h) * var(--page-count, 1));
 }
-.page-frame > .cv-page,
-.page-frame > .cl-page {
+.page-frame__measure {
+  display: block;
+}
+.page-frame > .page-frame__measure > .cv-page,
+.page-frame > .page-frame__measure > .cl-page {
+  min-height: calc(var(--cv-page-h) * var(--page-count, 1));
   position: relative;
   z-index: 1;
 }
 
-/* Overlay container clips page-break elements to the document
-   height so the breaks don't leak into the workspace below
-   shorter CVs. */
+/* Overlay container clips break elements to the page-frame height,
+   so breaks past the actual content don't leak into the workspace. */
 .page-frame__breaks {
   position: absolute;
   inset: 0;
@@ -1480,19 +1506,56 @@ a:hover {
     background: #fff;
   }
   .toolbar,
-  .tweaks,
-  .screen-only {
+  .inspector,
+  .screen-only,
+  .page-frame__breaks {
     display: none !important;
   }
   .app {
     background: #fff;
+    --inspector-w: 0px;
   }
   .stage {
-    padding: 0;
+    padding: 0 !important;
   }
-  .cv-page {
+  .cv-page,
+  .cl-page {
     box-shadow: none;
     margin: 0;
+  }
+
+  /* Force backgrounds and ink colours to render in the printed PDF.
+     Browsers strip them by default; the CV's whole identity lives
+     in the sidebar tint, so this is non-negotiable. */
+  .cv-page,
+  .cv-sidebar,
+  .cv-language__bar,
+  .cv-language__fill,
+  .cl-page,
+  .cl-page::before {
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+  }
+
+  /* Don't split a single experience block, role, education entry,
+     honour, or metric across a printed page boundary. Bullets within
+     a role can still break — they're long-form content. */
+  .cv-experience,
+  .cv-education,
+  .cv-honour,
+  .cv-metric {
+    page-break-inside: avoid;
+    break-inside: avoid;
+  }
+
+  /* PageFrame extends content to a whole multiple of A4 in the
+     editor, but in print the browser handles real page breaks via
+     @page. Drop the artificial min-height so the printed PDF
+     doesn't carry empty trailing pages. */
+  .page-frame,
+  .page-frame > .page-frame__measure > .cv-page,
+  .page-frame > .page-frame__measure > .cl-page {
+    min-height: 0;
   }
 }
 
