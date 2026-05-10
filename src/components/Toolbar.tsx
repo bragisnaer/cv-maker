@@ -28,6 +28,26 @@ export function Toolbar() {
     createProfile(name.trim(), structuredClone(cv));
   }
 
+  function onAddLanguage() {
+    const lang = window.prompt(
+      'Language for the new copy (e.g. Dansk, Español)',
+      'Dansk',
+    );
+    if (!lang || !lang.trim()) return;
+    const trimmed = lang.trim();
+    const baseName = active.replace(/ \([^)]+\)$/, '');
+    const candidate = `${baseName} (${trimmed})`;
+    let name = candidate;
+    let i = 2;
+    while (profileNames.includes(name)) {
+      name = `${candidate} ${i}`;
+      i++;
+    }
+    const next = structuredClone(cv);
+    next.language = trimmed;
+    createProfile(name, next);
+  }
+
   function onRename() {
     const name = window.prompt('Rename profile', active);
     if (!name || !name.trim() || name === active) return;
@@ -109,6 +129,13 @@ export function Toolbar() {
         </select>
         <button className="btn btn--ghost" onClick={onSaveAs}>
           Save as…
+        </button>
+        <button
+          className="btn btn--ghost"
+          onClick={onAddLanguage}
+          title="Duplicate this CV in another language"
+        >
+          + Language
         </button>
         <button className="btn btn--ghost" onClick={onRename}>
           Rename

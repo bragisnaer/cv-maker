@@ -132,6 +132,10 @@ export interface CoverLetter {
 }
 
 export interface CVData {
+  /** ID of the active template (see src/templates/registry). */
+  templateId: string;
+  /** ISO-ish language label of this CV ("English", "Dansk"…). */
+  language: string;
   name: string;
   title: string;
   contact: Contact;

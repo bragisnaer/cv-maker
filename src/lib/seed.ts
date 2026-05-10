@@ -7,6 +7,8 @@ import type { Application } from '../types/application';
  * state a brand-new visitor sees.
  */
 export const SEED_CV: CVData = {
+  templateId: 'editorial',
+  language: 'English',
   name: 'Alex Rivera',
   title: 'Senior Product Designer',
   contact: {
