@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Bragi Hallsson — CV</title>
+<title>cv-maker</title>
 
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -225,118 +225,102 @@
 //  Seed CV data — overridden by localStorage if present
 // ════════════════════════════════════════════════════════════════
 const SEED_CV = {
-  name: 'Bragi Snær Hallsson',
-  title: 'Project Portfolio Manager · B.Eng.',
+  name: 'Alex Rivera',
+  title: 'Senior Product Designer',
   contact: {
-    email: 'bragi.snaer@gmail.com',
-    phone: '+45 60 90 71 99',
-    linkedin: 'linkedin.com/in/bragihallsson',
-    location: 'Horsens, Denmark',
+    email: 'alex.rivera@example.com',
+    phone: '+1 555 0142',
+    linkedin: 'linkedin.com/in/alexrivera',
+    location: 'Berlin, Germany',
     relocation: 'Open to relocation',
-    dob: '04 August 1997',
+    dob: '12 March 1992',
   },
-  summary: 'Project Portfolio Manager with six years at reco ApS in industrial circular economy, progressing from procurement specialist to portfolio lead. Hands-on delivery across closed-loop recycling programmes for ABS, PE foil, linoleum, and polymer waste streams with tier-one European industrial partners. Owns EU regulatory workstreams including REACH, RoHS, and Annex VII waste transport documentation. Multinational background spanning Iceland, Norway, Spain, and Denmark. Fluent in English, Icelandic, and Danish, with working Norwegian.',
+  summary: 'Senior product designer with eight years across SaaS, fintech, and consumer e-commerce. Leads small cross-functional teams from research through shipped product, with a track record of redesigns that lift activation and retention. Comfortable in Figma, prototyping, and design systems; partners closely with engineering on complex flows.',
   metrics: [
-    { value: '200t', unit: '/ year', label: 'PE foil routed, Hisense ESD programme' },
-    { value: '20,000+', unit: 'items', label: 'Wolt courier gear recycled in 2023' },
-    { value: '130,005 kg', unit: '/ year', label: 'Fertin plastic trays across 30 annual pickups' },
-    { value: '6 yrs', unit: 'at reco', label: 'Procurement specialist to portfolio' },
-    { value: '11%', unit: 'equity', label: 'Board member since the 2025 acquisition' },
-    { value: '4', unit: 'countries', label: 'Iceland · Norway · Spain · Denmark' },
+    { value: '+38%', unit: 'activation', label: 'Onboarding redesign at Lumen Pay' },
+    { value: '12', unit: 'designers', label: 'Hired and mentored across two teams' },
+    { value: '4', unit: 'design systems', label: 'Built or migrated end-to-end' },
+    { value: '8 yrs', unit: 'product design', label: 'B2B SaaS, fintech, consumer' },
+    { value: '$2.1M', unit: 'ARR impact', label: 'Tied to checkout redesign in 2024' },
+    { value: '3', unit: 'continents', label: 'Worked across NA, EU, and APAC teams' },
   ],
   experience: [
     {
-      company: 'reco ApS',
-      companyNote: 'trading as TARPREC ApS',
-      location: 'Horsens, Denmark',
-      dates: 'March 2019 – present',
+      company: 'Lumen Pay',
+      companyNote: 'Series B fintech, 220 employees',
+      location: 'Berlin, Germany',
+      dates: 'June 2022 – present',
       roles: [
         {
-          title: 'Project Portfolio Manager', dates: '2025 – present',
+          title: 'Senior Product Designer', dates: '2024 – present',
           bullets: [
-            'Lead the Hisense ESD foil closed-loop programme, covering c. 200 tonnes per year of yellow anti-static PE foil routed from Hisense Slovenia via KOSTAK to Green Plastic Recycling GmbH in Germany.',
-            'Run the Forbo linoleum recycling programme under EU LIFE CEBW Work Package C14.1, including NDA execution with Forbo Flooring BV and Deliverable 1 acceptance by Skive Kommune.',
-            'Position Wolt Region North gear operations as the global scaling blueprint, combining Shopify-automated procurement and reverse logistics across the full courier gear lifecycle.',
-            'Execute the Fertin plastic tray recycling programme at 130,005 kg per year across 30 pickups, with delivery cadence scheduled through Q1 2027.',
-            'Deliver the PVC hangar door recovery programme for the Danish Armed Forces (Forsvaret), including the commercial cost model and formal report.',
-            'Draft and revise commercial contracts including a lease agreement with Klovborg Maskinfabrik and the company General T&Cs under Danish law.',
-            'Board Member, reco ApS, since the 2025 acquisition, holding an 11 per cent equity stake.',
+            'Lead design for the merchant onboarding workstream; redesigned KYC + bank-link flow lifted activation by 38 per cent quarter over quarter.',
+            'Own the checkout component library across web and mobile, used by 14 product engineers and 4 designers.',
+            'Run weekly design critique and pair with researchers on quarterly usability rounds with merchants in DE, FR, and NL.',
+            'Mentor two mid-level designers; both promoted within the last review cycle.',
           ],
         },
         {
-          title: 'Operations Manager', dates: 'September 2020 – 2025',
+          title: 'Product Designer', dates: 'June 2022 – 2024',
           bullets: [
-            'Delivered the Wolt End-of-Life Gear recycling programme, recycling over 20,000 courier gear items in 2023.',
-            'Ran the Stark Group Denmark wood-waste upcycling programme, contributing to Scope 3 downstream reductions across the building sector.',
-            'Managed material tracking and laboratory coordination for Freitag lab AG in Switzerland, upholding EU REACH material traceability standards.',
-            'Established the Danish Prison Authorities partnership, supporting inmate activation and rehabilitation through operational work.',
-            'Deployed the internal ERP system covering stock management, finance, and payroll.',
-            'Managed production on-boarding, mentorship, and performance feedback for operational staff.',
-          ],
-        },
-        {
-          title: 'Procurement Manager', dates: 'March 2019 – August 2020',
-          bullets: [
-            'Led a team of six purchasers, providing guidance and performance management.',
-            'Developed and implemented procurement strategies across supplier categories.',
-            'Negotiated contracts and commercial agreements with suppliers.',
-            'Identified and mitigated supply chain risks.',
+            'Shipped the dashboard analytics rebuild, cutting time-to-first-insight from 4 minutes to under 30 seconds.',
+            'Migrated the design system from Sketch to Figma with token-based theming for white-label customers.',
+            'Partnered with Growth on activation experiments; three of five reached statistical significance.',
           ],
         },
       ],
     },
     {
-      company: 'Hospitality (Restaurant)', companyNote: 'Name to be confirmed',
-      location: 'Horsens, Denmark', dates: 'Aug 2017 – Feb 2019',
+      company: 'Northwind Commerce',
+      companyNote: 'Mid-market e-commerce platform',
+      location: 'Amsterdam, Netherlands',
+      dates: 'Aug 2018 – May 2022',
       roles: [{
-        title: 'Bar Manager', dates: 'Aug 2017 – Feb 2019',
+        title: 'Product Designer', dates: 'Aug 2018 – May 2022',
         bullets: [
-          'Managed bar operations alongside full-time engineering studies at VIA.',
-          'Coordinated shift teams, inventory, and customer service.',
+          'Designed storefront editor used by 6,000 merchants; cut average setup time from 90 minutes to 22.',
+          'Led mobile checkout overhaul that contributed to a 12 per cent lift in mobile conversion.',
+          'Built and maintained the merchant-facing component library.',
         ],
       }],
     },
   ],
   education: [
-    { degree: 'B.Eng. Global Business Engineering', spec: 'Software Specialisation', school: 'VIA University College', location: 'Horsens, Denmark', dates: 'Graduated January 2022', note: '4.5-year programme combining engineering, business strategy, and software development, with coursework in programming, data management, and international business.' },
-    { degree: 'International Advanced Levels', spec: 'Pearson', school: 'Phoenix International School', location: 'Alicante, Spain', dates: 'Completed 2017', note: 'English-medium programme covering Accounting, Advanced Mathematics, Business Studies, and English Language and Literature.' },
+    { degree: 'B.A. Interaction Design', spec: 'Human-Computer Interaction', school: 'Malmö University', location: 'Malmö, Sweden', dates: 'Graduated June 2017', note: 'Three-year programme combining design research, prototyping, and front-end implementation.' },
   ],
   honours: [
-    { title: 'Honour title', years: '2024', text: 'Description of the honour, achievement, or recognition. Include context, scope, and outcome.' },
+    { title: 'Awwwards Site of the Day', years: '2023', text: 'Recognised for the public Lumen Pay marketing site relaunch led with the brand team.' },
   ],
   languages: [
     { name: 'English', level: 'Native', pct: 100 },
-    { name: 'Icelandic', level: 'Native', pct: 100 },
-    { name: 'Danish', level: 'Professional', pct: 80 },
-    { name: 'Norwegian', level: 'Working', pct: 60 },
+    { name: 'Spanish', level: 'Professional', pct: 80 },
+    { name: 'German', level: 'Working', pct: 60 },
   ],
-  certifications: [{ name: 'Google Project Management', year: '2024' }],
+  certifications: [{ name: 'NN/g UX Certification', year: '2021' }],
   competencies: [
-    'Project portfolio management',
-    'Circular economy programme design',
-    'EU waste transport & Annex VII documentation',
-    'REACH and RoHS compliance',
-    'Supplier negotiation & contract drafting',
-    'Financial modelling & cash flow forecasting',
-    'Process development & quality control',
+    'End-to-end product design',
+    'Design systems and tokens',
+    'User research and usability testing',
+    'Prototyping and motion',
+    'Cross-functional team leadership',
+    'Mentorship and hiring',
+    'Workshop facilitation',
   ],
   tools: [
-    { name: 'Microsoft Office', level: 'Advanced' },
-    { name: 'Power BI', level: 'Advanced' },
-    { name: 'SAP', level: 'Advanced' },
+    { name: 'Figma', level: 'Advanced' },
+    { name: 'Framer', level: 'Advanced' },
+    { name: 'Notion', level: 'Advanced' },
+    { name: 'HTML & CSS', level: 'Advanced' },
+    { name: 'React', level: 'Fundamental' },
     { name: 'Adobe Creative Cloud', level: 'Fundamental' },
-    { name: 'SQL', level: 'Fundamental' },
-    { name: 'HTML & CSS', level: 'Fundamental' },
-    { name: 'Java', level: 'Fundamental' },
-    { name: 'Next.js · Prisma · Tailwind', level: 'Fundamental' },
+    { name: 'Webflow', level: 'Fundamental' },
   ],
-  softSkills: ['Team collaboration', 'Adaptability', 'Leadership', 'Time management', 'Strong work ethic'],
+  softSkills: ['Team collaboration', 'Clear written communication', 'Mentorship', 'Stakeholder management', 'Calm under pressure'],
   positions: [
-    { role: 'Chairman', org: 'VIA University Student Council', dates: '2018 – 2019' },
-    { role: 'Vice-Chairman', org: 'VIA University Student Council', dates: '2017 – 2018' },
+    { role: 'Mentor', org: 'ADPList', dates: '2021 – present' },
   ],
-  interests: ['Home lab & home automation', 'Camping', 'Reading', 'Swimming'],
-  additional: 'Represented Iceland at the 2015 European Games in Baku (swimming). Multinational upbringing across Iceland, Norway, Spain, and Denmark.',
+  interests: ['Generative art', 'Cycling', 'Specialty coffee', 'Bouldering'],
+  additional: 'Open-source contributor to a small handful of design tooling projects. Speak occasionally at local meetups on design systems.',
   sidebar: [
     { id: 'competencies', title: 'Core Competencies', visible: true },
     { id: 'tools',        title: 'Technical Tools',  visible: true },
@@ -394,7 +378,7 @@ const COLOR_SCHEMES = [
   { id: 'slate',  name: 'Slate mono',   ink: '#1a1a1a', side: '#ececea' },
   { id: 'plum',   name: 'Plum',         ink: '#3a1f3d', side: '#f1ebef' },
   { id: 'ocean',  name: 'Ocean',        ink: '#0e3a52', side: '#e6edf0' },
-  { id: 'reco',   name: 'Reco red',     ink: '#000000', side: '#faf9f4' },
+  { id: 'crimson', name: 'Crimson',     ink: '#000000', side: '#faf9f4' },
 ];
 
 const APP_STATUSES = [
@@ -460,7 +444,7 @@ function deepMerge(base, override) {
 }
 
 // ── IndexedDB for image bytes (avoids 5MB localStorage cap) ─────
-const IDB_DB = 'cv-bragi';
+const IDB_DB = 'cv-maker';
 const IDB_STORE = 'images';
 function idbOpen() {
   return new Promise((res, rej) => {
@@ -534,6 +518,21 @@ function loadActive(profiles) {
 // ── Job applications ────────────────────────────────────────────
 const APPS_KEY = 'cv-applications';
 const appHeadshotKeyFor = (id) => `app-headshot:${id}`;
+const SEED_APPS = [
+  {
+    id: 'sample-app-001',
+    company: 'Northstar Studio',
+    role: 'Senior Product Designer',
+    postingUrl: 'https://example.com/jobs/northstar-senior-product-designer',
+    appliedDate: '',
+    status: 'drafting',
+    notes: 'Sample application. Replace or delete to start your own list.',
+    createdAt: '2026-05-01T09:00:00.000Z',
+    updatedAt: '2026-05-01T09:00:00.000Z',
+    sourceProfile: 'Base CV',
+    snapshot: { cv: null, headshotKey: null },
+  },
+];
 function loadApplications() {
   try {
     const raw = localStorage.getItem(APPS_KEY);
@@ -542,7 +541,7 @@ function loadApplications() {
       if (Array.isArray(v)) return v;
     }
   } catch {}
-  return [];
+  return SEED_APPS.slice();
 }
 function saveApplications(list) {
   try { localStorage.setItem(APPS_KEY, JSON.stringify(list)); }
