@@ -729,6 +729,60 @@ a:hover {
 }
 
 /* ─────────────────────────────────────────────────────────────────
+   Inline editing affordances
+   ───────────────────────────────────────────────────────────── */
+
+.cv-li {
+  position: relative;
+}
+
+.cv-add {
+  margin-top: 6px;
+  padding: 4px 10px;
+  font: inherit;
+  font-size: 10px;
+  font-weight: 500;
+  color: var(--color-steel);
+  background: transparent;
+  border: 1px dashed var(--color-hairline-strong);
+  border-radius: var(--radius-xs);
+  cursor: pointer;
+  align-self: flex-start;
+  letter-spacing: 0.02em;
+}
+.cv-add:hover {
+  color: var(--color-primary);
+  border-color: var(--color-primary);
+  background: rgba(79, 60, 219, 0.05);
+}
+
+.cv-remove {
+  position: absolute;
+  top: 0;
+  right: -22px;
+  width: 18px;
+  height: 18px;
+  padding: 0;
+  background: var(--color-canvas);
+  color: var(--color-steel);
+  border: 1px solid var(--color-hairline);
+  border-radius: var(--radius-full);
+  font-size: 12px;
+  line-height: 1;
+  cursor: pointer;
+  opacity: 0;
+  transition: opacity 100ms ease, color 100ms ease, border-color 100ms ease;
+}
+.cv-li:hover > .cv-remove,
+.cv-li:focus-within > .cv-remove {
+  opacity: 1;
+}
+.cv-remove:hover {
+  color: var(--color-error);
+  border-color: var(--color-error);
+}
+
+/* ─────────────────────────────────────────────────────────────────
    Print mode
    ───────────────────────────────────────────────────────────── */
 
@@ -743,7 +797,8 @@ a:hover {
     background: #fff;
   }
   .toolbar,
-  .tweaks {
+  .tweaks,
+  .screen-only {
     display: none !important;
   }
   .app {

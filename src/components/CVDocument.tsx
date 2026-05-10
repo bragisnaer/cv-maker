@@ -13,6 +13,7 @@ import type {
 } from '../types/cv';
 import { useCVStore } from '../state/useCVStore';
 import { EditableText } from './EditableText';
+import { AddRow, RemoveButton } from './EditChrome';
 import { A4_HEIGHT_PX, A4_WIDTH_PX } from '../lib/constants';
 
 interface CVDocumentProps {
@@ -144,22 +145,36 @@ function SidebarBody({
   data: CVData;
   readOnly?: boolean;
 }) {
-  const { updatePath } = useCVStore();
+  const { updatePath, appendAt, removeAt } = useCVStore();
   switch (id) {
     case 'competencies':
       return (
-        <ul className="cv-list">
-          {data.competencies.map((c, i) => (
-            <li key={i}>
-              <EditableText
-                value={c}
-                onChange={(v) => updatePath(['competencies', i], v)}
-                readOnly={readOnly}
-                placeholder="Competency"
-              />
-            </li>
-          ))}
-        </ul>
+        <>
+          <ul className="cv-list">
+            {data.competencies.map((c, i) => (
+              <li key={i} className="cv-li">
+                <EditableText
+                  value={c}
+                  onChange={(v) => updatePath(['competencies', i], v)}
+                  readOnly={readOnly}
+                  placeholder="Competency"
+                />
+                {!readOnly && (
+                  <RemoveButton
+                    label="Remove competency"
+                    onClick={() => removeAt(['competencies'], i)}
+                  />
+                )}
+              </li>
+            ))}
+          </ul>
+          {!readOnly && (
+            <AddRow
+              label="competency"
+              onClick={() => appendAt(['competencies'], 'New competency')}
+            />
+          )}
+        </>
       );
     case 'tools':
       return <ToolsList tools={data.tools} readOnly={readOnly} />;
@@ -167,58 +182,101 @@ function SidebarBody({
       return <LanguagesList languages={data.languages} readOnly={readOnly} />;
     case 'certifications':
       return (
-        <ul className="cv-list">
-          {data.certifications.map((c, i) => (
-            <li key={i}>
-              <EditableText
-                value={c.name}
-                onChange={(v) => updatePath(['certifications', i, 'name'], v)}
-                readOnly={readOnly}
-                placeholder="Certification"
-              />
-              {c.year && (
+        <>
+          <ul className="cv-list">
+            {data.certifications.map((c, i) => (
+              <li key={i} className="cv-li">
+                <EditableText
+                  value={c.name}
+                  onChange={(v) => updatePath(['certifications', i, 'name'], v)}
+                  readOnly={readOnly}
+                  placeholder="Certification"
+                />
                 <span className="cv-meta">
                   {' · '}
                   <EditableText
-                    value={c.year}
+                    value={c.year ?? ''}
                     onChange={(v) => updatePath(['certifications', i, 'year'], v)}
                     readOnly={readOnly}
+                    placeholder="Year"
                   />
                 </span>
-              )}
-            </li>
-          ))}
-        </ul>
+                {!readOnly && (
+                  <RemoveButton
+                    label="Remove certification"
+                    onClick={() => removeAt(['certifications'], i)}
+                  />
+                )}
+              </li>
+            ))}
+          </ul>
+          {!readOnly && (
+            <AddRow
+              label="certification"
+              onClick={() =>
+                appendAt(['certifications'], { name: 'Certification', year: '' })
+              }
+            />
+          )}
+        </>
       );
     case 'softSkills':
       return (
-        <ul className="cv-list">
-          {data.softSkills.map((s, i) => (
-            <li key={i}>
-              <EditableText
-                value={s}
-                onChange={(v) => updatePath(['softSkills', i], v)}
-                readOnly={readOnly}
-              />
-            </li>
-          ))}
-        </ul>
+        <>
+          <ul className="cv-list">
+            {data.softSkills.map((s, i) => (
+              <li key={i} className="cv-li">
+                <EditableText
+                  value={s}
+                  onChange={(v) => updatePath(['softSkills', i], v)}
+                  readOnly={readOnly}
+                />
+                {!readOnly && (
+                  <RemoveButton
+                    label="Remove soft skill"
+                    onClick={() => removeAt(['softSkills'], i)}
+                  />
+                )}
+              </li>
+            ))}
+          </ul>
+          {!readOnly && (
+            <AddRow
+              label="soft skill"
+              onClick={() => appendAt(['softSkills'], 'New soft skill')}
+            />
+          )}
+        </>
       );
     case 'positions':
       return <PositionsList positions={data.positions} readOnly={readOnly} />;
     case 'interests':
       return (
-        <ul className="cv-list cv-list--inline">
-          {data.interests.map((s, i) => (
-            <li key={i}>
-              <EditableText
-                value={s}
-                onChange={(v) => updatePath(['interests', i], v)}
-                readOnly={readOnly}
-              />
-            </li>
-          ))}
-        </ul>
+        <>
+          <ul className="cv-list cv-list--inline">
+            {data.interests.map((s, i) => (
+              <li key={i} className="cv-li cv-li--inline">
+                <EditableText
+                  value={s}
+                  onChange={(v) => updatePath(['interests', i], v)}
+                  readOnly={readOnly}
+                />
+                {!readOnly && (
+                  <RemoveButton
+                    label="Remove interest"
+                    onClick={() => removeAt(['interests'], i)}
+                  />
+                )}
+              </li>
+            ))}
+          </ul>
+          {!readOnly && (
+            <AddRow
+              label="interest"
+              onClick={() => appendAt(['interests'], 'New interest')}
+            />
+          )}
+        </>
       );
     case 'additional':
       return (
@@ -238,26 +296,40 @@ function SidebarBody({
 }
 
 function ToolsList({ tools, readOnly }: { tools: ToolEntry[]; readOnly?: boolean }) {
-  const { updatePath } = useCVStore();
+  const { updatePath, appendAt, removeAt } = useCVStore();
   return (
-    <ul className="cv-list">
-      {tools.map((t, i) => (
-        <li key={i} className="cv-tool">
-          <EditableText
-            value={t.name}
-            onChange={(v) => updatePath(['tools', i, 'name'], v)}
-            readOnly={readOnly}
-          />
-          <span className="cv-meta">
+    <>
+      <ul className="cv-list">
+        {tools.map((t, i) => (
+          <li key={i} className="cv-tool cv-li">
             <EditableText
-              value={t.level}
-              onChange={(v) => updatePath(['tools', i, 'level'], v)}
+              value={t.name}
+              onChange={(v) => updatePath(['tools', i, 'name'], v)}
               readOnly={readOnly}
             />
-          </span>
-        </li>
-      ))}
-    </ul>
+            <span className="cv-meta">
+              <EditableText
+                value={t.level}
+                onChange={(v) => updatePath(['tools', i, 'level'], v)}
+                readOnly={readOnly}
+              />
+            </span>
+            {!readOnly && (
+              <RemoveButton
+                label="Remove tool"
+                onClick={() => removeAt(['tools'], i)}
+              />
+            )}
+          </li>
+        ))}
+      </ul>
+      {!readOnly && (
+        <AddRow
+          label="tool"
+          onClick={() => appendAt(['tools'], { name: 'New tool', level: 'Fundamental' })}
+        />
+      )}
+    </>
   );
 }
 
@@ -268,31 +340,47 @@ function LanguagesList({
   languages: Language[];
   readOnly?: boolean;
 }) {
-  const { updatePath } = useCVStore();
+  const { updatePath, appendAt, removeAt } = useCVStore();
   return (
-    <ul className="cv-list cv-languages">
-      {languages.map((l, i) => (
-        <li key={i}>
-          <div className="cv-language__row">
-            <EditableText
-              value={l.name}
-              onChange={(v) => updatePath(['languages', i, 'name'], v)}
-              readOnly={readOnly}
-            />
-            <span className="cv-meta">
+    <>
+      <ul className="cv-list cv-languages">
+        {languages.map((l, i) => (
+          <li key={i} className="cv-li">
+            <div className="cv-language__row">
               <EditableText
-                value={l.level}
-                onChange={(v) => updatePath(['languages', i, 'level'], v)}
+                value={l.name}
+                onChange={(v) => updatePath(['languages', i, 'name'], v)}
                 readOnly={readOnly}
               />
-            </span>
-          </div>
-          <div className="cv-language__bar">
-            <div className="cv-language__fill" style={{ width: `${l.pct}%` }} />
-          </div>
-        </li>
-      ))}
-    </ul>
+              <span className="cv-meta">
+                <EditableText
+                  value={l.level}
+                  onChange={(v) => updatePath(['languages', i, 'level'], v)}
+                  readOnly={readOnly}
+                />
+              </span>
+            </div>
+            <div className="cv-language__bar">
+              <div className="cv-language__fill" style={{ width: `${l.pct}%` }} />
+            </div>
+            {!readOnly && (
+              <RemoveButton
+                label="Remove language"
+                onClick={() => removeAt(['languages'], i)}
+              />
+            )}
+          </li>
+        ))}
+      </ul>
+      {!readOnly && (
+        <AddRow
+          label="language"
+          onClick={() =>
+            appendAt(['languages'], { name: 'Language', level: 'Working', pct: 60 })
+          }
+        />
+      )}
+    </>
   );
 }
 
@@ -303,36 +391,49 @@ function PositionsList({
   positions: Position[];
   readOnly?: boolean;
 }) {
-  const { updatePath } = useCVStore();
+  const { updatePath, appendAt, removeAt } = useCVStore();
   return (
-    <ul className="cv-list">
-      {positions.map((p, i) => (
-        <li key={i}>
-          <EditableText
-            value={p.role}
-            onChange={(v) => updatePath(['positions', i, 'role'], v)}
-            readOnly={readOnly}
-          />
-          <div className="cv-meta">
+    <>
+      <ul className="cv-list">
+        {positions.map((p, i) => (
+          <li key={i} className="cv-li">
             <EditableText
-              value={p.org}
-              onChange={(v) => updatePath(['positions', i, 'org'], v)}
+              value={p.role}
+              onChange={(v) => updatePath(['positions', i, 'role'], v)}
               readOnly={readOnly}
             />
-            {p.dates && (
-              <>
-                {' · '}
-                <EditableText
-                  value={p.dates}
-                  onChange={(v) => updatePath(['positions', i, 'dates'], v)}
-                  readOnly={readOnly}
-                />
-              </>
+            <div className="cv-meta">
+              <EditableText
+                value={p.org}
+                onChange={(v) => updatePath(['positions', i, 'org'], v)}
+                readOnly={readOnly}
+              />
+              {' · '}
+              <EditableText
+                value={p.dates ?? ''}
+                onChange={(v) => updatePath(['positions', i, 'dates'], v)}
+                readOnly={readOnly}
+                placeholder="Dates"
+              />
+            </div>
+            {!readOnly && (
+              <RemoveButton
+                label="Remove position"
+                onClick={() => removeAt(['positions'], i)}
+              />
             )}
-          </div>
-        </li>
-      ))}
-    </ul>
+          </li>
+        ))}
+      </ul>
+      {!readOnly && (
+        <AddRow
+          label="position"
+          onClick={() =>
+            appendAt(['positions'], { role: 'Role', org: 'Organisation', dates: '' })
+          }
+        />
+      )}
+    </>
   );
 }
 
@@ -341,7 +442,7 @@ function PositionsList({
    ───────────────────────────────────────────────────────────── */
 
 function CVMain({ data, readOnly }: { data: CVData; readOnly?: boolean }) {
-  const { updatePath } = useCVStore();
+  const { updatePath, appendAt } = useCVStore();
   return (
     <main className="cv-main">
       <section className="cv-block">
@@ -376,6 +477,22 @@ function CVMain({ data, readOnly }: { data: CVData; readOnly?: boolean }) {
         {data.experience.map((exp, i) => (
           <ExperienceBlock key={i} exp={exp} ci={i} readOnly={readOnly} />
         ))}
+        {!readOnly && (
+          <AddRow
+            label="company"
+            onClick={() =>
+              appendAt(['experience'], {
+                company: 'New company',
+                companyNote: '',
+                location: 'Location',
+                dates: 'Dates',
+                roles: [
+                  { title: 'Role', dates: 'Dates', bullets: ['Bullet point.'] },
+                ],
+              })
+            }
+          />
+        )}
       </section>
 
       <section className="cv-block">
@@ -389,9 +506,24 @@ function CVMain({ data, readOnly }: { data: CVData; readOnly?: boolean }) {
         {data.education.map((ed, i) => (
           <EducationBlock key={i} ed={ed} index={i} readOnly={readOnly} />
         ))}
+        {!readOnly && (
+          <AddRow
+            label="education"
+            onClick={() =>
+              appendAt(['education'], {
+                degree: 'Degree',
+                spec: '',
+                school: 'School',
+                location: 'Location',
+                dates: 'Dates',
+                note: '',
+              })
+            }
+          />
+        )}
       </section>
 
-      {data.honours.length > 0 && (
+      {(data.honours.length > 0 || !readOnly) && (
         <section className="cv-block">
           <EditableText
             as="h2"
@@ -403,6 +535,18 @@ function CVMain({ data, readOnly }: { data: CVData; readOnly?: boolean }) {
           {data.honours.map((h, i) => (
             <HonourBlock key={i} honour={h} index={i} readOnly={readOnly} />
           ))}
+          {!readOnly && (
+            <AddRow
+              label="honour"
+              onClick={() =>
+                appendAt(['honours'], {
+                  title: 'Honour',
+                  years: '',
+                  text: 'Description.',
+                })
+              }
+            />
+          )}
         </section>
       )}
     </main>
@@ -416,37 +560,53 @@ function MetricsGrid({
   metrics: Metric[];
   readOnly?: boolean;
 }) {
-  const { updatePath } = useCVStore();
-  if (metrics.length === 0) return null;
+  const { updatePath, appendAt, removeAt } = useCVStore();
+  if (metrics.length === 0 && readOnly) return null;
   return (
-    <section className="cv-metrics">
-      {metrics.map((m, i) => (
-        <div key={i} className="cv-metric">
-          <div className="cv-metric__value">
-            <EditableText
-              value={m.value}
-              onChange={(v) => updatePath(['metrics', i, 'value'], v)}
-              readOnly={readOnly}
-            />
-            <span className="cv-metric__unit">
-              {' '}
+    <section className="cv-metrics-wrap">
+      <div className="cv-metrics">
+        {metrics.map((m, i) => (
+          <div key={i} className="cv-metric cv-li">
+            <div className="cv-metric__value">
               <EditableText
-                value={m.unit}
-                onChange={(v) => updatePath(['metrics', i, 'unit'], v)}
+                value={m.value}
+                onChange={(v) => updatePath(['metrics', i, 'value'], v)}
                 readOnly={readOnly}
               />
-            </span>
+              <span className="cv-metric__unit">
+                {' '}
+                <EditableText
+                  value={m.unit}
+                  onChange={(v) => updatePath(['metrics', i, 'unit'], v)}
+                  readOnly={readOnly}
+                />
+              </span>
+            </div>
+            <div className="cv-metric__label">
+              <EditableText
+                value={m.label}
+                onChange={(v) => updatePath(['metrics', i, 'label'], v)}
+                readOnly={readOnly}
+                multiline
+              />
+            </div>
+            {!readOnly && (
+              <RemoveButton
+                label="Remove metric"
+                onClick={() => removeAt(['metrics'], i)}
+              />
+            )}
           </div>
-          <div className="cv-metric__label">
-            <EditableText
-              value={m.label}
-              onChange={(v) => updatePath(['metrics', i, 'label'], v)}
-              readOnly={readOnly}
-              multiline
-            />
-          </div>
-        </div>
-      ))}
+        ))}
+      </div>
+      {!readOnly && (
+        <AddRow
+          label="metric"
+          onClick={() =>
+            appendAt(['metrics'], { value: 'X', unit: 'unit', label: 'Label' })
+          }
+        />
+      )}
     </section>
   );
 }
@@ -460,9 +620,9 @@ function ExperienceBlock({
   ci: number;
   readOnly?: boolean;
 }) {
-  const { updatePath } = useCVStore();
+  const { updatePath, appendAt, removeAt } = useCVStore();
   return (
-    <article className="cv-experience">
+    <article className="cv-experience cv-li">
       <header className="cv-experience__header">
         <div>
           <EditableText
@@ -472,15 +632,14 @@ function ExperienceBlock({
             onChange={(v) => updatePath(['experience', ci, 'company'], v)}
             readOnly={readOnly}
           />
-          {exp.companyNote && (
-            <EditableText
-              as="span"
-              className="cv-meta"
-              value={exp.companyNote}
-              onChange={(v) => updatePath(['experience', ci, 'companyNote'], v)}
-              readOnly={readOnly}
-            />
-          )}
+          <EditableText
+            as="div"
+            className="cv-meta"
+            value={exp.companyNote ?? ''}
+            onChange={(v) => updatePath(['experience', ci, 'companyNote'], v)}
+            readOnly={readOnly}
+            placeholder="Company note"
+          />
         </div>
         <div className="cv-experience__meta">
           <EditableText
@@ -497,8 +656,33 @@ function ExperienceBlock({
         </div>
       </header>
       {exp.roles.map((role, ri) => (
-        <RoleBlock key={ri} role={role} ci={ci} ri={ri} readOnly={readOnly} />
+        <RoleBlock
+          key={ri}
+          role={role}
+          ci={ci}
+          ri={ri}
+          rolesLength={exp.roles.length}
+          readOnly={readOnly}
+        />
       ))}
+      {!readOnly && (
+        <AddRow
+          label="role"
+          onClick={() =>
+            appendAt(['experience', ci, 'roles'], {
+              title: 'New role',
+              dates: 'Dates',
+              bullets: ['Bullet point.'],
+            })
+          }
+        />
+      )}
+      {!readOnly && (
+        <RemoveButton
+          label="Remove company"
+          onClick={() => removeAt(['experience'], ci)}
+        />
+      )}
     </article>
   );
 }
@@ -507,16 +691,18 @@ function RoleBlock({
   role,
   ci,
   ri,
+  rolesLength,
   readOnly,
 }: {
   role: Role;
   ci: number;
   ri: number;
+  rolesLength: number;
   readOnly?: boolean;
 }) {
-  const { updatePath } = useCVStore();
+  const { updatePath, appendAt, removeAt } = useCVStore();
   return (
-    <div className="cv-role">
+    <div className="cv-role cv-li">
       <div className="cv-role__header">
         <EditableText
           as="h4"
@@ -534,7 +720,7 @@ function RoleBlock({
       </div>
       <ul className="cv-bullets">
         {role.bullets.map((b, bi) => (
-          <li key={bi}>
+          <li key={bi} className="cv-li">
             <EditableText
               value={b}
               onChange={(v) =>
@@ -543,9 +729,29 @@ function RoleBlock({
               readOnly={readOnly}
               multiline
             />
+            {!readOnly && (
+              <RemoveButton
+                label="Remove bullet"
+                onClick={() => removeAt(['experience', ci, 'roles', ri, 'bullets'], bi)}
+              />
+            )}
           </li>
         ))}
       </ul>
+      {!readOnly && (
+        <AddRow
+          label="bullet"
+          onClick={() =>
+            appendAt(['experience', ci, 'roles', ri, 'bullets'], 'Bullet point.')
+          }
+        />
+      )}
+      {!readOnly && rolesLength > 1 && (
+        <RemoveButton
+          label="Remove role"
+          onClick={() => removeAt(['experience', ci, 'roles'], ri)}
+        />
+      )}
     </div>
   );
 }
@@ -559,9 +765,9 @@ function EducationBlock({
   index: number;
   readOnly?: boolean;
 }) {
-  const { updatePath } = useCVStore();
+  const { updatePath, removeAt } = useCVStore();
   return (
-    <article className="cv-education">
+    <article className="cv-education cv-li">
       <header className="cv-education__header">
         <div>
           <EditableText
@@ -571,15 +777,14 @@ function EducationBlock({
             onChange={(v) => updatePath(['education', index, 'degree'], v)}
             readOnly={readOnly}
           />
-          {ed.spec && (
-            <EditableText
-              as="span"
-              className="cv-meta"
-              value={ed.spec}
-              onChange={(v) => updatePath(['education', index, 'spec'], v)}
-              readOnly={readOnly}
-            />
-          )}
+          <EditableText
+            as="div"
+            className="cv-meta"
+            value={ed.spec ?? ''}
+            onChange={(v) => updatePath(['education', index, 'spec'], v)}
+            readOnly={readOnly}
+            placeholder="Specialisation"
+          />
         </div>
         <div className="cv-education__meta">
           <EditableText
@@ -601,14 +806,19 @@ function EducationBlock({
           />
         </div>
       </header>
-      {ed.note && (
-        <EditableText
-          as="p"
-          className="cv-paragraph"
-          value={ed.note}
-          onChange={(v) => updatePath(['education', index, 'note'], v)}
-          readOnly={readOnly}
-          multiline
+      <EditableText
+        as="p"
+        className="cv-paragraph"
+        value={ed.note ?? ''}
+        onChange={(v) => updatePath(['education', index, 'note'], v)}
+        readOnly={readOnly}
+        multiline
+        placeholder="Note"
+      />
+      {!readOnly && (
+        <RemoveButton
+          label="Remove education"
+          onClick={() => removeAt(['education'], index)}
         />
       )}
     </article>
@@ -624,9 +834,9 @@ function HonourBlock({
   index: number;
   readOnly?: boolean;
 }) {
-  const { updatePath } = useCVStore();
+  const { updatePath, removeAt } = useCVStore();
   return (
-    <article className="cv-honour">
+    <article className="cv-honour cv-li">
       <header className="cv-honour__header">
         <EditableText
           as="h3"
@@ -635,14 +845,13 @@ function HonourBlock({
           onChange={(v) => updatePath(['honours', index, 'title'], v)}
           readOnly={readOnly}
         />
-        {honour.years && (
-          <EditableText
-            className="cv-meta"
-            value={honour.years}
-            onChange={(v) => updatePath(['honours', index, 'years'], v)}
-            readOnly={readOnly}
-          />
-        )}
+        <EditableText
+          className="cv-meta"
+          value={honour.years ?? ''}
+          onChange={(v) => updatePath(['honours', index, 'years'], v)}
+          readOnly={readOnly}
+          placeholder="Year"
+        />
       </header>
       <EditableText
         as="p"
@@ -652,6 +861,12 @@ function HonourBlock({
         readOnly={readOnly}
         multiline
       />
+      {!readOnly && (
+        <RemoveButton
+          label="Remove honour"
+          onClick={() => removeAt(['honours'], index)}
+        />
+      )}
     </article>
   );
 }

@@ -10,7 +10,7 @@ import {
 import type { Application } from '../types/application';
 import type { CVData, ProfileMap } from '../types/cv';
 import { DEFAULT_PROFILE_NAME } from '../lib/constants';
-import { deepMerge, setPath } from '../lib/helpers';
+import { deepMerge, readPath, setPath } from '../lib/helpers';
 import { SEED_CV } from '../lib/seed';
 import {
   ensureProfiles,
@@ -109,6 +109,10 @@ interface StoreValue extends State {
   cv: CVData;
   setCV: (cv: CVData) => void;
   updatePath: (path: (string | number)[], value: unknown) => void;
+  /** Append `item` to an array at `path`. Path must point to an array. */
+  appendAt: (path: (string | number)[], item: unknown) => void;
+  /** Remove the entry at `path[..., index]`. */
+  removeAt: (path: (string | number)[], index: number) => void;
   setActive: (name: string) => void;
   createProfile: (name: string, cv?: CVData) => void;
   renameProfile: (from: string, to: string) => void;
@@ -157,6 +161,23 @@ export function CVStoreProvider({ children }: { children: ReactNode }) {
       dispatch({ type: 'set_path', profile: state.active, path, value }),
     [state.active],
   );
+  const appendAt = useCallback(
+    (path: (string | number)[], item: unknown) => {
+      const current = readPath(state.profiles[state.active]?.cv, path);
+      const next = Array.isArray(current) ? [...current, item] : [item];
+      dispatch({ type: 'set_path', profile: state.active, path, value: next });
+    },
+    [state.active, state.profiles],
+  );
+  const removeAt = useCallback(
+    (path: (string | number)[], index: number) => {
+      const current = readPath(state.profiles[state.active]?.cv, path);
+      if (!Array.isArray(current)) return;
+      const next = current.filter((_, i) => i !== index);
+      dispatch({ type: 'set_path', profile: state.active, path, value: next });
+    },
+    [state.active, state.profiles],
+  );
   const setActive = useCallback(
     (name: string) => dispatch({ type: 'set_active', name }),
     [],
@@ -195,6 +216,8 @@ export function CVStoreProvider({ children }: { children: ReactNode }) {
     cv,
     setCV,
     updatePath,
+    appendAt,
+    removeAt,
     setActive,
     createProfile,
     renameProfile,

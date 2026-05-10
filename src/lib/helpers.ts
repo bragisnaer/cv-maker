@@ -33,6 +33,19 @@ export function setPath<T>(obj: T, path: (string | number)[], value: unknown): T
   return root as T;
 }
 
+/**
+ * Read a nested value at `path` from `obj`, returning undefined if any
+ * intermediate key is missing or not an object/array.
+ */
+export function readPath(obj: unknown, path: (string | number)[]): unknown {
+  let cur: unknown = obj;
+  for (const k of path) {
+    if (cur == null || typeof cur !== 'object') return undefined;
+    cur = (cur as Record<string | number, unknown>)[k];
+  }
+  return cur;
+}
+
 export function classNames(
   ...parts: Array<string | false | null | undefined>
 ): string {
