@@ -16,8 +16,8 @@ export function App() {
             Open the v1 editor
           </a>
           <a
-            className="btn btn--ghost"
-            href="https://github.com/"
+            className="btn btn--secondary"
+            href="https://github.com/bragisnaer/cv-maker"
             target="_blank"
             rel="noreferrer"
           >
