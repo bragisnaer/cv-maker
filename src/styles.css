@@ -736,6 +736,15 @@ a:hover {
   color: var(--cv-ink);
 }
 
+/* Section bundle — wraps a section header with its first entry so
+   they paginate as a single block (no widow titles). Internal flex
+   gap matches cv-main's so the visual rhythm is unchanged. */
+.cv-section-bundle {
+  display: flex;
+  flex-direction: column;
+  gap: 22px;
+}
+
 /* Main-column document header (name + title). Sits at the top of
    the right column; sidebar starts with the headshot directly. */
 .cv-main__header {

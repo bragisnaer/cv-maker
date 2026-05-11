@@ -373,7 +373,7 @@ function ExperienceSectionStart({
   firstExp?: Experience;
 }) {
   return (
-    <>
+    <div className="cv-section-bundle">
       <SectionTitle
         value={data.sectionTitles.experience}
         path={['sectionTitles', 'experience']}
@@ -382,7 +382,7 @@ function ExperienceSectionStart({
       {firstExp && (
         <ExperienceBlock exp={firstExp} ci={0} readOnly={readOnly} />
       )}
-    </>
+    </div>
   );
 }
 
@@ -396,7 +396,7 @@ function EducationSectionStart({
   firstEd?: Education;
 }) {
   return (
-    <>
+    <div className="cv-section-bundle">
       <SectionTitle
         value={data.sectionTitles.education}
         path={['sectionTitles', 'education']}
@@ -405,7 +405,7 @@ function EducationSectionStart({
       {firstEd && (
         <EducationBlock ed={firstEd} index={0} readOnly={readOnly} />
       )}
-    </>
+    </div>
   );
 }
 
@@ -419,7 +419,7 @@ function HonoursSectionStart({
   firstHonour?: Honour;
 }) {
   return (
-    <>
+    <div className="cv-section-bundle">
       <SectionTitle
         value={data.sectionTitles.honours}
         path={['sectionTitles', 'honours']}
@@ -428,7 +428,7 @@ function HonoursSectionStart({
       {firstHonour && (
         <HonourBlock honour={firstHonour} index={0} readOnly={readOnly} />
       )}
-    </>
+    </div>
   );
 }
 
