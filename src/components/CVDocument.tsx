@@ -61,83 +61,113 @@ function PaginatedCV({
 }) {
   const { active } = useCVStore();
 
-  const blocks = useMainBlocks(data, readOnly);
+  const mainBlocks = useMainBlocks(data, readOnly);
+  const sidebarBlocks = useSidebarBlocks(data, readOnly, active);
 
-  // Measurement pass: render every block in a ghost article (off-screen,
-  // visibility: hidden) so we can measure each block's natural height
-  // at the real cv-main width.
-  const measureRef = useRef<HTMLElement | null>(null);
-  const [heights, setHeights] = useState<number[] | null>(null);
+  // Hidden ghost article renders every block so we can measure each
+  // block's natural height at the real cv-sidebar / cv-main widths.
+  const mainMeasureRef = useRef<HTMLElement | null>(null);
+  const sidebarMeasureRef = useRef<HTMLElement | null>(null);
+  const [mainHeights, setMainHeights] = useState<number[] | null>(null);
+  const [sidebarHeights, setSidebarHeights] = useState<number[] | null>(null);
 
   useLayoutEffect(() => {
-    const root = measureRef.current;
-    if (!root) return;
-    const children = Array.from(root.children) as HTMLElement[];
-    const measured = children.map((el) => {
-      const cs = getComputedStyle(el);
-      return (
-        el.offsetHeight +
-        (parseFloat(cs.marginTop) || 0) +
-        (parseFloat(cs.marginBottom) || 0)
-      );
-    });
-    setHeights((prev) => {
-      if (
-        prev &&
-        prev.length === measured.length &&
-        prev.every((h, i) => Math.abs(h - measured[i]) < 0.5)
-      ) {
-        return prev;
-      }
-      return measured;
-    });
+    if (mainMeasureRef.current) {
+      const m = measureChildren(mainMeasureRef.current);
+      setMainHeights((prev) => (sameHeights(prev, m) ? prev : m));
+    }
+    if (sidebarMeasureRef.current) {
+      const s = measureChildren(sidebarMeasureRef.current);
+      setSidebarHeights((prev) => (sameHeights(prev, s) ? prev : s));
+    }
   });
 
-  const pages = useMemo(() => {
-    if (!heights || heights.length !== blocks.length) {
-      return [blocks.map((_, i) => i)];
+  const mainPages = useMemo(() => {
+    if (!mainHeights || mainHeights.length !== mainBlocks.length) {
+      return [mainBlocks.map((_, i) => i)];
     }
-    return distributeBlocks(heights);
-  }, [heights, blocks]);
+    return distributeBlocks(mainHeights);
+  }, [mainHeights, mainBlocks]);
+
+  const sidebarPages = useMemo(() => {
+    if (!sidebarHeights || sidebarHeights.length !== sidebarBlocks.length) {
+      return [sidebarBlocks.map((_, i) => i)];
+    }
+    return distributeBlocks(sidebarHeights);
+  }, [sidebarHeights, sidebarBlocks]);
+
+  const pageCount = Math.max(mainPages.length, sidebarPages.length);
 
   return (
     <div className="cv-stack" style={themeVars}>
       <article className="cv-page cv-page--ghost" aria-hidden>
-        <aside className="cv-sidebar" />
-        <main className="cv-main" ref={measureRef as React.RefObject<HTMLElement>}>
-          {blocks.map((b) => (
+        <aside
+          className="cv-sidebar"
+          ref={sidebarMeasureRef as React.RefObject<HTMLElement>}
+        >
+          {sidebarBlocks.map((b) => (
+            <Fragment key={b.id}>{b.node}</Fragment>
+          ))}
+        </aside>
+        <main
+          className="cv-main"
+          ref={mainMeasureRef as React.RefObject<HTMLElement>}
+        >
+          {mainBlocks.map((b) => (
             <Fragment key={b.id}>{b.node}</Fragment>
           ))}
         </main>
       </article>
 
-      {pages.map((blockIndices, pageIdx) => (
-        <article
-          key={pageIdx}
-          className="cv-page"
-          aria-label={
-            pageIdx === 0
-              ? `${data.name} — CV`
-              : `${data.name} — CV (page ${pageIdx + 1})`
-          }
-        >
-          <aside className="cv-sidebar">
-            {pageIdx === 0 ? (
-              <SidebarContent
-                data={data}
-                readOnly={readOnly}
-                profileName={active}
-              />
-            ) : null}
-          </aside>
-          <main className="cv-main">
-            {blockIndices.map((i) => (
-              <Fragment key={blocks[i].id}>{blocks[i].node}</Fragment>
-            ))}
-          </main>
-        </article>
-      ))}
+      {Array.from({ length: pageCount }, (_, pageIdx) => {
+        const sideIdx = sidebarPages[pageIdx] ?? [];
+        const mainIdx = mainPages[pageIdx] ?? [];
+        return (
+          <article
+            key={pageIdx}
+            className="cv-page"
+            aria-label={
+              pageIdx === 0
+                ? `${data.name} — CV`
+                : `${data.name} — CV (page ${pageIdx + 1})`
+            }
+          >
+            <aside className="cv-sidebar">
+              {sideIdx.map((i) => (
+                <Fragment key={sidebarBlocks[i].id}>
+                  {sidebarBlocks[i].node}
+                </Fragment>
+              ))}
+            </aside>
+            <main className="cv-main">
+              {mainIdx.map((i) => (
+                <Fragment key={mainBlocks[i].id}>{mainBlocks[i].node}</Fragment>
+              ))}
+            </main>
+          </article>
+        );
+      })}
     </div>
+  );
+}
+
+function measureChildren(root: HTMLElement): number[] {
+  return Array.from(root.children).map((el) => {
+    const node = el as HTMLElement;
+    const cs = getComputedStyle(node);
+    return (
+      node.offsetHeight +
+      (parseFloat(cs.marginTop) || 0) +
+      (parseFloat(cs.marginBottom) || 0)
+    );
+  });
+}
+
+function sameHeights(prev: number[] | null, next: number[]): boolean {
+  return (
+    !!prev &&
+    prev.length === next.length &&
+    prev.every((h, i) => Math.abs(h - next[i]) < 0.5)
   );
 }
 
@@ -266,34 +296,41 @@ function useMainBlocks(data: CVData, readOnly?: boolean): MainBlock[] {
 }
 
 /* ─────────────────────────────────────────────────────────────────
-   Sidebar — full content stack, rendered on page 1 only.
+   Sidebar block list — flat sequence of cv-sidebar children for
+   pagination. Headshot, contact, then each visible sidebar section.
    ───────────────────────────────────────────────────────────── */
 
-function SidebarContent({
-  data,
-  readOnly,
-  profileName,
-}: {
-  data: CVData;
-  readOnly?: boolean;
-  profileName: string;
-}) {
-  return (
-    <>
-      <Headshot config={data.headshot} profileName={profileName} readOnly={readOnly} />
-      <SidebarContact data={data} readOnly={readOnly} />
-      {data.sidebar
-        .filter((s) => s.visible)
-        .map((section) => (
-          <SidebarSection
-            key={section.id}
-            section={section}
-            data={data}
-            readOnly={readOnly}
-          />
-        ))}
-    </>
-  );
+function useSidebarBlocks(
+  data: CVData,
+  readOnly: boolean | undefined,
+  profileName: string,
+): MainBlock[] {
+  return useMemo(() => {
+    const blocks: MainBlock[] = [];
+    blocks.push({
+      id: 'headshot',
+      node: (
+        <Headshot
+          config={data.headshot}
+          profileName={profileName}
+          readOnly={readOnly}
+        />
+      ),
+    });
+    blocks.push({
+      id: 'contact',
+      node: <SidebarContact data={data} readOnly={readOnly} />,
+    });
+    data.sidebar
+      .filter((s) => s.visible)
+      .forEach((section) => {
+        blocks.push({
+          id: `side-${section.id}`,
+          node: <SidebarSection section={section} data={data} readOnly={readOnly} />,
+        });
+      });
+    return blocks;
+  }, [data, readOnly, profileName]);
 }
 
 function MainHeader({ data, readOnly }: { data: CVData; readOnly?: boolean }) {
