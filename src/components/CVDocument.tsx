@@ -141,17 +141,20 @@ function PaginatedCV({
   );
 }
 
+const BLOCK_GAP_PX = 22; // matches cv-main's flex gap
+
 function distributeBlocks(heights: number[]): number[][] {
   const result: number[][] = [[]];
   let used = 0;
   heights.forEach((h, i) => {
     const current = result[result.length - 1];
-    if (used + h > PAGE_CONTENT_PX && current.length > 0) {
+    const cost = current.length === 0 ? h : h + BLOCK_GAP_PX;
+    if (used + cost > PAGE_CONTENT_PX && current.length > 0) {
       result.push([i]);
       used = h;
     } else {
       current.push(i);
-      used += h;
+      used += cost;
     }
   });
   return result;
