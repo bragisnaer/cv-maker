@@ -40,11 +40,7 @@ function Editor() {
         </SideButton>
       )}
       <main className="stage">
-        {view === 'cv' && (
-          <PageFrame>
-            <CVDocument data={cv} />
-          </PageFrame>
-        )}
+        {view === 'cv' && <CVDocument data={cv} />}
         {view === 'cover' && (
           <PageFrame>
             <CoverLetter data={cv} />

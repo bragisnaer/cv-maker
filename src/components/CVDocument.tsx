@@ -1,4 +1,12 @@
-import type { CSSProperties } from 'react';
+import {
+  Fragment,
+  useLayoutEffect,
+  useMemo,
+  useRef,
+  useState,
+  type CSSProperties,
+  type ReactNode,
+} from 'react';
 import type {
   CVData,
   Education,
@@ -23,6 +31,14 @@ interface CVDocumentProps {
   readOnly?: boolean;
 }
 
+const PAGE_MARGIN_PX = 36;
+const PAGE_CONTENT_PX = A4_HEIGHT_PX - 2 * PAGE_MARGIN_PX;
+
+interface MainBlock {
+  id: string;
+  node: ReactNode;
+}
+
 export function CVDocument({ data, readOnly }: CVDocumentProps) {
   const cssVars: CSSProperties & Record<string, string> = {
     '--cv-ink': data.theme.ink,
@@ -31,23 +47,237 @@ export function CVDocument({ data, readOnly }: CVDocumentProps) {
     '--cv-page-h': `${A4_HEIGHT_PX}px`,
   };
 
+  return <PaginatedCV data={data} readOnly={readOnly} themeVars={cssVars} />;
+}
+
+function PaginatedCV({
+  data,
+  readOnly,
+  themeVars,
+}: {
+  data: CVData;
+  readOnly?: boolean;
+  themeVars: CSSProperties & Record<string, string>;
+}) {
+  const { active } = useCVStore();
+
+  const blocks = useMainBlocks(data, readOnly);
+
+  // Measurement pass: render every block in a ghost article (off-screen,
+  // visibility: hidden) so we can measure each block's natural height
+  // at the real cv-main width.
+  const measureRef = useRef<HTMLElement | null>(null);
+  const [heights, setHeights] = useState<number[] | null>(null);
+
+  useLayoutEffect(() => {
+    const root = measureRef.current;
+    if (!root) return;
+    const children = Array.from(root.children) as HTMLElement[];
+    const measured = children.map((el) => {
+      const cs = getComputedStyle(el);
+      return (
+        el.offsetHeight +
+        (parseFloat(cs.marginTop) || 0) +
+        (parseFloat(cs.marginBottom) || 0)
+      );
+    });
+    setHeights((prev) => {
+      if (
+        prev &&
+        prev.length === measured.length &&
+        prev.every((h, i) => Math.abs(h - measured[i]) < 0.5)
+      ) {
+        return prev;
+      }
+      return measured;
+    });
+  });
+
+  const pages = useMemo(() => {
+    if (!heights || heights.length !== blocks.length) {
+      return [blocks.map((_, i) => i)];
+    }
+    return distributeBlocks(heights);
+  }, [heights, blocks]);
+
   return (
-    <article className="cv-page" style={cssVars} aria-label={`${data.name} — CV`}>
-      <CVSidebar data={data} readOnly={readOnly} />
-      <CVMain data={data} readOnly={readOnly} />
-    </article>
+    <div className="cv-stack" style={themeVars}>
+      <article className="cv-page cv-page--ghost" aria-hidden>
+        <aside className="cv-sidebar" />
+        <main className="cv-main" ref={measureRef as React.RefObject<HTMLElement>}>
+          {blocks.map((b) => (
+            <Fragment key={b.id}>{b.node}</Fragment>
+          ))}
+        </main>
+      </article>
+
+      {pages.map((blockIndices, pageIdx) => (
+        <article
+          key={pageIdx}
+          className="cv-page"
+          aria-label={
+            pageIdx === 0
+              ? `${data.name} — CV`
+              : `${data.name} — CV (page ${pageIdx + 1})`
+          }
+        >
+          <aside className="cv-sidebar">
+            {pageIdx === 0 ? (
+              <SidebarContent
+                data={data}
+                readOnly={readOnly}
+                profileName={active}
+              />
+            ) : null}
+          </aside>
+          <main className="cv-main">
+            {blockIndices.map((i) => (
+              <Fragment key={blocks[i].id}>{blocks[i].node}</Fragment>
+            ))}
+          </main>
+        </article>
+      ))}
+    </div>
   );
 }
 
+function distributeBlocks(heights: number[]): number[][] {
+  const result: number[][] = [[]];
+  let used = 0;
+  heights.forEach((h, i) => {
+    const current = result[result.length - 1];
+    if (used + h > PAGE_CONTENT_PX && current.length > 0) {
+      result.push([i]);
+      used = h;
+    } else {
+      current.push(i);
+      used += h;
+    }
+  });
+  return result;
+}
+
 /* ─────────────────────────────────────────────────────────────────
-   Sidebar (left column, theme-tinted)
+   Block list — flat sequence of cv-main children for pagination.
+   Section headers are bundled with their first entry so we never
+   leave a widow header at the bottom of a page.
    ───────────────────────────────────────────────────────────── */
 
-function CVSidebar({ data, readOnly }: { data: CVData; readOnly?: boolean }) {
-  const { active } = useCVStore();
+function useMainBlocks(data: CVData, readOnly?: boolean): MainBlock[] {
+  return useMemo(() => {
+    const blocks: MainBlock[] = [];
+
+    blocks.push({
+      id: 'header',
+      node: <MainHeader data={data} readOnly={readOnly} />,
+    });
+    blocks.push({
+      id: 'profile',
+      node: <ProfileBlock data={data} readOnly={readOnly} />,
+    });
+    if (data.metrics.length > 0 || !readOnly) {
+      blocks.push({
+        id: 'metrics',
+        node: <MetricsGrid metrics={data.metrics} readOnly={readOnly} />,
+      });
+    }
+
+    blocks.push({
+      id: 'exp-section',
+      node: (
+        <ExperienceSectionStart
+          data={data}
+          readOnly={readOnly}
+          firstExp={data.experience[0]}
+        />
+      ),
+    });
+    for (let i = 1; i < data.experience.length; i++) {
+      blocks.push({
+        id: `exp-${i}`,
+        node: (
+          <ExperienceBlock
+            exp={data.experience[i]}
+            ci={i}
+            readOnly={readOnly}
+          />
+        ),
+      });
+    }
+    if (!readOnly) {
+      blocks.push({ id: 'exp-add', node: <ExperienceAddRow /> });
+    }
+
+    blocks.push({
+      id: 'edu-section',
+      node: (
+        <EducationSectionStart
+          data={data}
+          readOnly={readOnly}
+          firstEd={data.education[0]}
+        />
+      ),
+    });
+    for (let i = 1; i < data.education.length; i++) {
+      blocks.push({
+        id: `edu-${i}`,
+        node: (
+          <EducationBlock ed={data.education[i]} index={i} readOnly={readOnly} />
+        ),
+      });
+    }
+    if (!readOnly) {
+      blocks.push({ id: 'edu-add', node: <EducationAddRow /> });
+    }
+
+    if (data.honours.length > 0 || !readOnly) {
+      blocks.push({
+        id: 'hon-section',
+        node: (
+          <HonoursSectionStart
+            data={data}
+            readOnly={readOnly}
+            firstHonour={data.honours[0]}
+          />
+        ),
+      });
+      for (let i = 1; i < data.honours.length; i++) {
+        blocks.push({
+          id: `hon-${i}`,
+          node: (
+            <HonourBlock
+              honour={data.honours[i]}
+              index={i}
+              readOnly={readOnly}
+            />
+          ),
+        });
+      }
+      if (!readOnly) {
+        blocks.push({ id: 'hon-add', node: <HonourAddRow /> });
+      }
+    }
+
+    return blocks;
+  }, [data, readOnly]);
+}
+
+/* ─────────────────────────────────────────────────────────────────
+   Sidebar — full content stack, rendered on page 1 only.
+   ───────────────────────────────────────────────────────────── */
+
+function SidebarContent({
+  data,
+  readOnly,
+  profileName,
+}: {
+  data: CVData;
+  readOnly?: boolean;
+  profileName: string;
+}) {
   return (
-    <aside className="cv-sidebar">
-      <Headshot config={data.headshot} profileName={active} readOnly={readOnly} />
+    <>
+      <Headshot config={data.headshot} profileName={profileName} readOnly={readOnly} />
       <SidebarContact data={data} readOnly={readOnly} />
       {data.sidebar
         .filter((s) => s.visible)
@@ -59,7 +289,7 @@ function CVSidebar({ data, readOnly }: { data: CVData; readOnly?: boolean }) {
             readOnly={readOnly}
           />
         ))}
-    </aside>
+    </>
   );
 }
 
@@ -87,6 +317,179 @@ function MainHeader({ data, readOnly }: { data: CVData; readOnly?: boolean }) {
     </header>
   );
 }
+
+function ProfileBlock({ data, readOnly }: { data: CVData; readOnly?: boolean }) {
+  const { updatePath } = useCVStore();
+  return (
+    <section className="cv-block">
+      <EditableText
+        as="h2"
+        className="cv-block__title cv-block__title--main"
+        value={data.sectionTitles.profile}
+        onChange={(v) => updatePath(['sectionTitles', 'profile'], v)}
+        readOnly={readOnly}
+      />
+      <EditableText
+        as="p"
+        className="cv-paragraph"
+        value={data.summary}
+        onChange={(v) => updatePath(['summary'], v)}
+        readOnly={readOnly}
+        multiline
+        placeholder="Profile summary"
+      />
+    </section>
+  );
+}
+
+function SectionTitle({
+  value,
+  path,
+  readOnly,
+}: {
+  value: string;
+  path: (string | number)[];
+  readOnly?: boolean;
+}) {
+  const { updatePath } = useCVStore();
+  return (
+    <EditableText
+      as="h2"
+      className="cv-block__title cv-block__title--main cv-section-title"
+      value={value}
+      onChange={(v) => updatePath(path, v)}
+      readOnly={readOnly}
+    />
+  );
+}
+
+function ExperienceSectionStart({
+  data,
+  readOnly,
+  firstExp,
+}: {
+  data: CVData;
+  readOnly?: boolean;
+  firstExp?: Experience;
+}) {
+  return (
+    <>
+      <SectionTitle
+        value={data.sectionTitles.experience}
+        path={['sectionTitles', 'experience']}
+        readOnly={readOnly}
+      />
+      {firstExp && (
+        <ExperienceBlock exp={firstExp} ci={0} readOnly={readOnly} />
+      )}
+    </>
+  );
+}
+
+function EducationSectionStart({
+  data,
+  readOnly,
+  firstEd,
+}: {
+  data: CVData;
+  readOnly?: boolean;
+  firstEd?: Education;
+}) {
+  return (
+    <>
+      <SectionTitle
+        value={data.sectionTitles.education}
+        path={['sectionTitles', 'education']}
+        readOnly={readOnly}
+      />
+      {firstEd && (
+        <EducationBlock ed={firstEd} index={0} readOnly={readOnly} />
+      )}
+    </>
+  );
+}
+
+function HonoursSectionStart({
+  data,
+  readOnly,
+  firstHonour,
+}: {
+  data: CVData;
+  readOnly?: boolean;
+  firstHonour?: Honour;
+}) {
+  return (
+    <>
+      <SectionTitle
+        value={data.sectionTitles.honours}
+        path={['sectionTitles', 'honours']}
+        readOnly={readOnly}
+      />
+      {firstHonour && (
+        <HonourBlock honour={firstHonour} index={0} readOnly={readOnly} />
+      )}
+    </>
+  );
+}
+
+function ExperienceAddRow() {
+  const { appendAt } = useCVStore();
+  return (
+    <AddRow
+      label="company"
+      onClick={() =>
+        appendAt(['experience'], {
+          company: 'New company',
+          companyNote: '',
+          location: 'Location',
+          dates: 'Dates',
+          roles: [
+            { title: 'Role', dates: 'Dates', bullets: ['Bullet point.'] },
+          ],
+        })
+      }
+    />
+  );
+}
+
+function EducationAddRow() {
+  const { appendAt } = useCVStore();
+  return (
+    <AddRow
+      label="education"
+      onClick={() =>
+        appendAt(['education'], {
+          degree: 'Degree',
+          spec: '',
+          school: 'School',
+          location: 'Location',
+          dates: 'Dates',
+          note: '',
+        })
+      }
+    />
+  );
+}
+
+function HonourAddRow() {
+  const { appendAt } = useCVStore();
+  return (
+    <AddRow
+      label="honour"
+      onClick={() =>
+        appendAt(['honours'], {
+          title: 'Honour',
+          years: '',
+          text: 'Description.',
+        })
+      }
+    />
+  );
+}
+
+/* ─────────────────────────────────────────────────────────────────
+   Sidebar sub-components (unchanged from previous version)
+   ───────────────────────────────────────────────────────────── */
 
 function SidebarContact({ data, readOnly }: { data: CVData; readOnly?: boolean }) {
   const { updatePath } = useCVStore();
@@ -440,121 +843,8 @@ function PositionsList({
 }
 
 /* ─────────────────────────────────────────────────────────────────
-   Main column
+   Main column blocks
    ───────────────────────────────────────────────────────────── */
-
-function CVMain({ data, readOnly }: { data: CVData; readOnly?: boolean }) {
-  const { updatePath, appendAt } = useCVStore();
-  return (
-    <main className="cv-main">
-      <MainHeader data={data} readOnly={readOnly} />
-      <section className="cv-block">
-        <EditableText
-          as="h2"
-          className="cv-block__title cv-block__title--main"
-          value={data.sectionTitles.profile}
-          onChange={(v) => updatePath(['sectionTitles', 'profile'], v)}
-          readOnly={readOnly}
-        />
-        <EditableText
-          as="p"
-          className="cv-paragraph"
-          value={data.summary}
-          onChange={(v) => updatePath(['summary'], v)}
-          readOnly={readOnly}
-          multiline
-          placeholder="Profile summary"
-        />
-      </section>
-
-      <MetricsGrid metrics={data.metrics} readOnly={readOnly} />
-
-      <section className="cv-block">
-        <EditableText
-          as="h2"
-          className="cv-block__title cv-block__title--main"
-          value={data.sectionTitles.experience}
-          onChange={(v) => updatePath(['sectionTitles', 'experience'], v)}
-          readOnly={readOnly}
-        />
-        {data.experience.map((exp, i) => (
-          <ExperienceBlock key={i} exp={exp} ci={i} readOnly={readOnly} />
-        ))}
-        {!readOnly && (
-          <AddRow
-            label="company"
-            onClick={() =>
-              appendAt(['experience'], {
-                company: 'New company',
-                companyNote: '',
-                location: 'Location',
-                dates: 'Dates',
-                roles: [
-                  { title: 'Role', dates: 'Dates', bullets: ['Bullet point.'] },
-                ],
-              })
-            }
-          />
-        )}
-      </section>
-
-      <section className="cv-block">
-        <EditableText
-          as="h2"
-          className="cv-block__title cv-block__title--main"
-          value={data.sectionTitles.education}
-          onChange={(v) => updatePath(['sectionTitles', 'education'], v)}
-          readOnly={readOnly}
-        />
-        {data.education.map((ed, i) => (
-          <EducationBlock key={i} ed={ed} index={i} readOnly={readOnly} />
-        ))}
-        {!readOnly && (
-          <AddRow
-            label="education"
-            onClick={() =>
-              appendAt(['education'], {
-                degree: 'Degree',
-                spec: '',
-                school: 'School',
-                location: 'Location',
-                dates: 'Dates',
-                note: '',
-              })
-            }
-          />
-        )}
-      </section>
-
-      {(data.honours.length > 0 || !readOnly) && (
-        <section className="cv-block">
-          <EditableText
-            as="h2"
-            className="cv-block__title cv-block__title--main"
-            value={data.sectionTitles.honours}
-            onChange={(v) => updatePath(['sectionTitles', 'honours'], v)}
-            readOnly={readOnly}
-          />
-          {data.honours.map((h, i) => (
-            <HonourBlock key={i} honour={h} index={i} readOnly={readOnly} />
-          ))}
-          {!readOnly && (
-            <AddRow
-              label="honour"
-              onClick={() =>
-                appendAt(['honours'], {
-                  title: 'Honour',
-                  years: '',
-                  text: 'Description.',
-                })
-              }
-            />
-          )}
-        </section>
-      )}
-    </main>
-  );
-}
 
 function MetricsGrid({
   metrics,

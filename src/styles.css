@@ -686,9 +686,35 @@ a:hover {
    CV page (A4)
    ───────────────────────────────────────────────────────────── */
 
+/* CV page stack — multiple cv-page articles, one per A4 page, with
+   workspace cream visible between them. Each cv-page is its own
+   sheet of paper with its own drop shadow. */
+.cv-stack {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 36px;
+  position: relative;
+}
+
+/* Hidden measurement article — same width/structure as the visible
+   pages so block heights measure correctly at the real cv-main width.
+   Position absolute so it doesn't take space in the stack. */
+.cv-page--ghost {
+  position: absolute !important;
+  visibility: hidden;
+  pointer-events: none;
+  top: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  min-height: 0 !important;
+  height: auto !important;
+  box-shadow: none !important;
+}
+
 .cv-page {
   width: var(--cv-page-w);
-  min-height: var(--cv-page-h);
+  height: var(--cv-page-h);
   background: var(--color-canvas);
   box-shadow: 0 30px 60px -20px rgba(15, 15, 15, 0.28),
     0 8px 24px -8px rgba(15, 15, 15, 0.18);
@@ -698,6 +724,7 @@ a:hover {
   color: var(--cv-ink);
   font-size: 10.5px;
   line-height: 1.45;
+  overflow: hidden;
 }
 
 .cv-sidebar {
@@ -1637,6 +1664,26 @@ a:hover {
   .cl-page {
     box-shadow: none;
     margin: 0;
+    overflow: visible;
+  }
+
+  /* Hidden measurement article never prints. */
+  .cv-page--ghost {
+    display: none !important;
+  }
+
+  /* Each cv-page article is its own printed sheet. Force a page
+     break after every page except the last so the browser doesn't
+     try to repaginate them as a single flow. */
+  .cv-stack > .cv-page {
+    page-break-after: always;
+    break-after: page;
+    page-break-inside: avoid;
+    break-inside: avoid;
+  }
+  .cv-stack > .cv-page:last-of-type {
+    page-break-after: auto;
+    break-after: auto;
   }
 
   /* Force backgrounds and ink colours to render in the printed PDF.
