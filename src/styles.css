@@ -438,20 +438,31 @@ a:hover {
   margin: 0 0 10px;
 }
 
-@media (max-width: 1279px) {
+/* When the A4 page can no longer fit between the gutter buttons,
+   dock both buttons fixed BELOW the toolbar pill (centered, side by
+   side) so they remain reachable in split-screen / narrow viewports.
+   Panels drop downward from each button and stay inside the viewport
+   via a width clamp. */
+@media (max-width: 1179px) {
   .side-mount {
-    position: static;
-    width: 100%;
-    flex-direction: row;
-    justify-content: center;
-    padding: 8px 12px 0;
+    top: 72px;
+    width: 140px;
   }
-  .side-mount--left,
+  .side-mount--left {
+    right: calc(50% + 4px);
+    left: auto;
+    align-items: flex-end;
+  }
   .side-mount--right {
-    align-items: center;
+    left: calc(50% + 4px);
+    right: auto;
+    align-items: flex-start;
   }
   .side-panel {
-    width: min(320px, calc(100vw - 32px));
+    width: min(280px, calc(50vw - 12px));
+  }
+  .stage {
+    padding-top: 124px;
   }
 }
 
@@ -1641,7 +1652,7 @@ a:hover {
 
 @media (max-width: 900px) {
   .stage {
-    padding: 80px 12px 120px;
+    padding: 124px 12px 120px;
   }
   .cv-page {
     transform-origin: top center;
