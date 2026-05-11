@@ -1,10 +1,17 @@
 import { useRef } from 'react';
 import { useCVStore } from '../state/useCVStore';
-import { deepMerge } from '../lib/helpers';
+import { deepMerge, classNames } from '../lib/helpers';
 import { SEED_CV } from '../lib/seed';
 import type { CVData } from '../types/cv';
 
-export function Toolbar() {
+export type ToolbarView = 'cv' | 'cover' | 'apps';
+
+interface ToolbarProps {
+  view: ToolbarView;
+  onChangeView: (v: ToolbarView) => void;
+}
+
+export function Toolbar({ view, onChangeView }: ToolbarProps) {
   const {
     cv,
     profileNames,
@@ -109,8 +116,34 @@ export function Toolbar() {
     window.print();
   }
 
+  const tabs: Array<{ id: ToolbarView; label: string }> = [
+    { id: 'cv', label: 'CV' },
+    { id: 'cover', label: 'Cover' },
+    { id: 'apps', label: 'Apps' },
+  ];
+
   return (
     <div className="toolbar" role="toolbar" aria-label="CV editor toolbar">
+      <div className="toolbar__tabs" role="tablist" aria-label="Document">
+        {tabs.map((t) => (
+          <button
+            key={t.id}
+            type="button"
+            role="tab"
+            aria-selected={view === t.id}
+            className={classNames(
+              'toolbar__tab',
+              view === t.id && 'toolbar__tab--active',
+            )}
+            onClick={() => onChangeView(t.id)}
+          >
+            {t.label}
+          </button>
+        ))}
+      </div>
+
+      <div className="toolbar__sep" />
+
       <div className="toolbar__group">
         <label className="toolbar__label" htmlFor="profile-picker">
           Profile

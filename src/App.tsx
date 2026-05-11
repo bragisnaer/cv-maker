@@ -3,30 +3,42 @@ import { Applications } from './components/Applications';
 import { CVDocument } from './components/CVDocument';
 import { CoverLetter } from './components/CoverLetter';
 import { Footer } from './components/Footer';
-import { Inspector } from './components/Inspector';
 import { PageFrame } from './components/PageFrame';
-import { Toolbar } from './components/Toolbar';
+import { SideButton } from './components/SideButton';
+import { SidePanelProvider } from './components/SidePanelContext';
+import { TemplatesPanel } from './components/TemplatesPanel';
+import { Toolbar, type ToolbarView } from './components/Toolbar';
+import { TweaksPanel } from './components/TweaksPanel';
 import { CVStoreProvider, useCVStore } from './state/useCVStore';
-import { classNames } from './lib/helpers';
-
-type View = 'cv' | 'cover' | 'apps';
 
 export function App() {
   return (
     <CVStoreProvider>
-      <Editor />
+      <SidePanelProvider>
+        <Editor />
+      </SidePanelProvider>
     </CVStoreProvider>
   );
 }
 
 function Editor() {
   const { cv } = useCVStore();
-  const [view, setView] = useState<View>('cv');
+  const [view, setView] = useState<ToolbarView>('cv');
+  const showSidePanels = view !== 'apps';
 
   return (
-    <div className={classNames('app', view !== 'apps' && 'app--with-inspector')}>
-      <Toolbar />
-      <ViewTabs view={view} onChange={setView} />
+    <div className="app">
+      <Toolbar view={view} onChangeView={setView} />
+      {showSidePanels && (
+        <SideButton id="templates" label="Templates" side="left">
+          <TemplatesPanel />
+        </SideButton>
+      )}
+      {showSidePanels && (
+        <SideButton id="tweaks" label="Tweaks" side="right">
+          <TweaksPanel />
+        </SideButton>
+      )}
       <main className="stage">
         {view === 'cv' && (
           <PageFrame>
@@ -40,30 +52,7 @@ function Editor() {
         )}
         {view === 'apps' && <Applications />}
       </main>
-      {view !== 'apps' && <Inspector />}
       <Footer />
     </div>
-  );
-}
-
-function ViewTabs({ view, onChange }: { view: View; onChange: (v: View) => void }) {
-  const tabs: Array<{ id: View; label: string }> = [
-    { id: 'cv', label: 'CV' },
-    { id: 'cover', label: 'Cover letter' },
-    { id: 'apps', label: 'Applications' },
-  ];
-  return (
-    <nav className="view-tabs screen-only" aria-label="Document">
-      {tabs.map((t) => (
-        <button
-          key={t.id}
-          type="button"
-          className={classNames('view-tab', view === t.id && 'view-tab--active')}
-          onClick={() => onChange(t.id)}
-        >
-          {t.label}
-        </button>
-      ))}
-    </nav>
   );
 }

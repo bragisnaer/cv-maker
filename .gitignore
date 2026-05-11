@@ -37,3 +37,4 @@ pnpm-debug.log*
 my-cv-*.json
 
 .vercel
+.plan/

@@ -19,10 +19,19 @@
   --color-link: #0b6bcb;
   --color-link-pressed: #084d92;
 
-  /* Surfaces */
+  /* Surfaces — cream workspace, white CV card */
   --color-canvas: #ffffff;
-  --color-surface: #f7f6f3;
-  --color-surface-soft: #fbfaf8;
+  --color-surface: #efece6;
+  --color-surface-soft: #f5f2ec;
+
+  /* Dark chrome (compact toolbar pill + side panels) */
+  --color-chrome-bg: #17181a;
+  --color-chrome-bg-hover: #1f2024;
+  --color-chrome-text: #ffffff;
+  --color-chrome-text-muted: rgba(255, 255, 255, 0.6);
+  --color-chrome-border: #2a2520;
+  --color-chrome-button-bg: #2a2520;
+  --color-chrome-button-hover: #3a342d;
 
   /* Hairlines / borders */
   --color-hairline: #ededec;
@@ -90,8 +99,8 @@
   --cv-page-h: 1123px;
 
   /* Typography */
-  --font-sans: 'Inter', -apple-system, system-ui, 'Segoe UI', Helvetica, Arial,
-    sans-serif;
+  --font-sans: 'Inter Tight', 'Inter', -apple-system, system-ui, 'Segoe UI',
+    Helvetica, Arial, sans-serif;
   --font-mono: ui-monospace, 'SF Mono', Menlo, Consolas, monospace;
 
   font-family: var(--font-sans);
@@ -195,64 +204,43 @@ a:hover {
   background: var(--color-surface);
   display: flex;
   flex-direction: column;
+  --inspector-w: 0px;
 }
 
 .stage {
   flex: 1;
   display: flex;
   justify-content: center;
-  padding: 128px 24px 80px;
-}
-
-/* Inspector width is exposed as a CSS variable so the centred chrome
-   (toolbar, view-tabs) and the stage canvas can shift left by the
-   right amount when the inspector is mounted. */
-.app {
-  --inspector-w: 0px;
-}
-.app--with-inspector {
-  --inspector-w: 320px;
-}
-.app--with-inspector .stage {
-  padding-right: calc(var(--inspector-w) + 24px);
-}
-
-@media (max-width: 1279px) {
-  /* Hide the inspector on viewports too narrow to fit it alongside
-     the A4 page. The CV stays editable; controls fall back to the
-     toolbar's profile / language / reset actions. */
-  .app--with-inspector {
-    --inspector-w: 0px;
-  }
-  .app--with-inspector .inspector {
-    display: none;
-  }
+  padding: 88px 24px 80px;
+  position: relative;
 }
 
 /* ─────────────────────────────────────────────────────────────────
-   Toolbar (top sticky)
+   Toolbar — compact dark floating pill (v1 editorial chrome)
    ───────────────────────────────────────────────────────────── */
 
 .toolbar {
   position: fixed;
-  top: 0;
-  left: 0;
-  right: var(--inspector-w, 0px);
-  transform: none;
+  top: 12px;
+  left: 50%;
+  transform: translateX(-50%);
   z-index: 100;
-  background: var(--color-canvas);
-  border: none;
-  border-bottom: 1px solid var(--color-hairline);
-  border-radius: 0;
-  box-shadow: none;
-  padding: 0 20px;
-  height: 56px;
+  background: var(--color-chrome-bg);
+  color: var(--color-chrome-text);
+  border: 1px solid var(--color-chrome-border);
+  border-radius: var(--radius-lg);
+  box-shadow: 0 12px 32px -8px rgba(0, 0, 0, 0.28),
+    0 4px 12px -4px rgba(0, 0, 0, 0.18);
+  padding: 8px;
+  height: 52px;
   display: flex;
   align-items: center;
   gap: 4px;
-  font-size: 14px;
+  font-size: 13px;
   flex-wrap: nowrap;
+  max-width: calc(100vw - 32px);
   overflow-x: auto;
+  scrollbar-width: thin;
 }
 
 .toolbar__group {
@@ -264,18 +252,19 @@ a:hover {
 .toolbar__sep {
   width: 1px;
   height: 22px;
-  background: var(--color-hairline);
+  background: var(--color-chrome-border);
   margin: 0 4px;
+  flex-shrink: 0;
 }
 
 .toolbar__spacer {
-  flex: 1;
-  min-width: 8px;
+  width: 4px;
+  flex-shrink: 0;
 }
 
 .toolbar__label {
-  font-size: 12px;
-  color: var(--color-steel);
+  font-size: 11px;
+  color: var(--color-chrome-text-muted);
   padding: 0 6px;
 }
 
@@ -283,10 +272,10 @@ a:hover {
   height: 32px;
   padding: 0 24px 0 10px;
   font: inherit;
-  font-size: 13px;
-  color: var(--color-ink);
-  background: var(--color-canvas);
-  border: 1px solid var(--color-hairline-strong);
+  font-size: 12px;
+  color: var(--color-chrome-text);
+  background: var(--color-chrome-button-bg);
+  border: 1px solid var(--color-chrome-border);
   border-radius: var(--radius-sm);
   cursor: pointer;
 }
@@ -295,69 +284,175 @@ a:hover {
   outline-offset: 1px;
 }
 
-/* ─────────────────────────────────────────────────────────────────
-   Tweaks panel (bottom-right floating)
-   ───────────────────────────────────────────────────────────── */
-
-/* ─────────────────────────────────────────────────────────────────
-   Inspector — persistent right-side editor panel
-   ───────────────────────────────────────────────────────────── */
-
-.inspector {
-  position: fixed;
-  top: 0;
-  right: 0;
-  bottom: 0;
-  width: 320px;
-  background: var(--color-canvas);
-  border-left: 1px solid var(--color-hairline);
-  z-index: 80;
-  overflow-y: auto;
+.toolbar .btn {
+  height: 32px;
+  padding: 0 12px;
+  font-size: 12px;
+  font-weight: 500;
+  border-radius: var(--radius-sm);
+  background: var(--color-chrome-button-bg);
+  color: var(--color-chrome-text);
+  border: 1px solid transparent;
+}
+.toolbar .btn:hover:not(:disabled) {
+  background: var(--color-chrome-button-hover);
+  color: var(--color-chrome-text);
+}
+.toolbar .btn--ghost {
+  background: transparent;
+  color: var(--color-chrome-text-muted);
+}
+.toolbar .btn--ghost:hover:not(:disabled) {
+  background: var(--color-chrome-button-bg);
+  color: var(--color-chrome-text);
+}
+.toolbar .btn--primary {
+  background: var(--color-primary);
+  color: var(--color-on-dark);
+  border-color: var(--color-primary);
+  font-weight: 600;
+}
+.toolbar .btn--primary:hover:not(:disabled) {
+  background: var(--color-primary-pressed);
+  border-color: var(--color-primary-pressed);
+  color: var(--color-on-dark);
 }
 
-.inspector__inner {
+/* Tabs absorbed into the toolbar pill */
+.toolbar__tabs {
   display: flex;
-  flex-direction: column;
-}
-
-.inspector__section {
-  border-bottom: 1px solid var(--color-hairline);
-}
-
-.inspector__header {
-  display: flex;
-  width: 100%;
   align-items: center;
-  justify-content: space-between;
+  gap: 2px;
+  padding: 2px;
+  background: rgba(0, 0, 0, 0.25);
+  border-radius: var(--radius-sm);
+}
+.toolbar__tab {
+  height: 28px;
+  padding: 0 12px;
+  font: inherit;
+  font-size: 12px;
+  font-weight: 500;
   background: transparent;
   border: none;
-  padding: 14px 20px;
+  color: var(--color-chrome-text-muted);
+  border-radius: 4px;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: background-color 120ms ease, color 120ms ease;
+}
+.toolbar__tab:hover {
+  color: var(--color-chrome-text);
+}
+.toolbar__tab--active {
+  background: var(--color-chrome-button-hover);
+  color: var(--color-chrome-text);
+}
+
+/* ─────────────────────────────────────────────────────────────────
+   Side-mounted buttons + panels (flank the A4 page in the gutters)
+   ───────────────────────────────────────────────────────────── */
+
+.side-mount {
+  position: fixed;
+  top: 88px;
+  z-index: 90;
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  gap: 8px;
+  width: 140px;
+}
+.side-mount--left {
+  right: calc(50% + (var(--cv-page-w) / 2) + 12px);
+  align-items: flex-end;
+}
+.side-mount--right {
+  left: calc(50% + (var(--cv-page-w) / 2) + 12px);
+  align-items: flex-start;
+}
+
+.side-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 6px;
+  width: 140px;
+  height: 36px;
+  padding: 0 12px;
   font: inherit;
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--color-chrome-text);
+  background: var(--color-chrome-bg);
+  border: 1px solid var(--color-chrome-border);
+  border-radius: var(--radius-md);
+  box-shadow: 0 6px 24px rgba(0, 0, 0, 0.18);
+  cursor: pointer;
+  transition: transform 120ms ease, box-shadow 120ms ease,
+    background-color 120ms ease;
+}
+.side-button:hover {
+  background: var(--color-chrome-bg-hover);
+  transform: translateY(-1px);
+  box-shadow: 0 10px 28px rgba(0, 0, 0, 0.22);
+}
+.side-button--open {
+  background: var(--color-chrome-bg-hover);
+}
+.side-button__chevron {
   font-size: 11px;
+  color: var(--color-chrome-text-muted);
+  transition: transform 150ms ease;
+}
+.side-button--open .side-button__chevron {
+  transform: rotate(180deg);
+}
+
+.side-panel {
+  width: 280px;
+  background: var(--color-chrome-bg);
+  border: 1px solid var(--color-chrome-border);
+  border-radius: var(--radius-md);
+  box-shadow: 0 16px 40px rgba(0, 0, 0, 0.32);
+  padding: 16px;
+  max-height: 60vh;
+  overflow-y: auto;
+  color: var(--color-chrome-text);
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.side-panel__section + .side-panel__section {
+  padding-top: 16px;
+  border-top: 1px solid var(--color-chrome-border);
+}
+
+.side-panel__label {
+  font-size: 10px;
   font-weight: 600;
   letter-spacing: 0.08em;
   text-transform: uppercase;
-  color: var(--color-charcoal);
-  cursor: pointer;
-  transition: background-color 120ms ease;
-}
-.inspector__header:hover {
-  background: var(--color-surface);
+  color: var(--color-chrome-text-muted);
+  margin: 0 0 10px;
 }
 
-.inspector__chevron {
-  font-size: 12px;
-  line-height: 1;
-  color: var(--color-steel);
-  transform: rotate(180deg);
-  transition: transform 150ms ease;
-}
-.inspector__section--open .inspector__chevron {
-  transform: rotate(0deg);
-}
-
-.inspector__body {
-  padding: 0 20px 16px;
+@media (max-width: 1279px) {
+  .side-mount {
+    position: static;
+    width: 100%;
+    flex-direction: row;
+    justify-content: center;
+    padding: 8px 12px 0;
+  }
+  .side-mount--left,
+  .side-mount--right {
+    align-items: center;
+  }
+  .side-panel {
+    width: min(320px, calc(100vw - 32px));
+  }
 }
 
 /* Template thumbnails — 2-column grid of mini A4 previews */
@@ -375,8 +470,8 @@ a:hover {
   flex-direction: column;
   gap: 6px;
   padding: 6px 6px 8px;
-  background: var(--color-canvas);
-  border: 1px solid var(--color-hairline);
+  background: var(--color-chrome-button-bg);
+  border: 1px solid var(--color-chrome-border);
   border-radius: var(--radius-md);
   cursor: pointer;
   font: inherit;
@@ -386,7 +481,7 @@ a:hover {
     background-color 120ms ease;
 }
 .tmpl-card:hover {
-  border-color: var(--color-hairline-strong);
+  background: var(--color-chrome-button-hover);
 }
 .tmpl-card--active {
   border-color: var(--color-primary);
@@ -397,7 +492,7 @@ a:hover {
 .tmpl-card__name {
   font-size: 11px;
   font-weight: 500;
-  color: var(--color-charcoal);
+  color: var(--color-chrome-text);
   padding: 0 2px;
 }
 
@@ -472,10 +567,10 @@ a:hover {
 }
 .theme-swatch:hover {
   transform: scale(1.08);
-  box-shadow: 0 0 0 2px var(--color-canvas), 0 0 0 3px var(--color-hairline-strong);
+  box-shadow: 0 0 0 2px var(--color-chrome-bg), 0 0 0 3px var(--color-chrome-border);
 }
 .theme-swatch--active {
-  box-shadow: 0 0 0 2px var(--color-canvas), 0 0 0 4px var(--color-primary);
+  box-shadow: 0 0 0 2px var(--color-chrome-bg), 0 0 0 4px var(--color-primary);
 }
 
 /* Layout controls — sidebar visibility + reorder */
@@ -493,8 +588,8 @@ a:hover {
   align-items: center;
   justify-content: space-between;
   padding: 6px 0;
-  font-size: 13px;
-  color: var(--color-charcoal);
+  font-size: 12px;
+  color: var(--color-chrome-text);
 }
 
 .layout-row__check {
@@ -521,16 +616,16 @@ a:hover {
 .layout-row__reorder button {
   width: 24px;
   height: 24px;
-  border: 1px solid var(--color-hairline);
-  background: var(--color-canvas);
+  border: 1px solid var(--color-chrome-border);
+  background: var(--color-chrome-button-bg);
   border-radius: var(--radius-xs);
   font-size: 12px;
-  color: var(--color-steel);
+  color: var(--color-chrome-text-muted);
   cursor: pointer;
 }
 .layout-row__reorder button:hover:not(:disabled) {
-  background: var(--color-surface);
-  color: var(--color-ink);
+  background: var(--color-chrome-button-hover);
+  color: var(--color-chrome-text);
 }
 .layout-row__reorder button:disabled {
   opacity: 0.3;
@@ -566,7 +661,8 @@ a:hover {
   width: var(--cv-page-w);
   min-height: var(--cv-page-h);
   background: var(--color-canvas);
-  box-shadow: var(--elev-3);
+  box-shadow: 0 30px 60px -20px rgba(15, 15, 15, 0.28),
+    0 8px 24px -8px rgba(15, 15, 15, 0.18);
   display: grid;
   grid-template-columns: 270px 1fr;
   font-family: var(--font-sans);
@@ -823,56 +919,6 @@ a:hover {
 }
 
 /* ─────────────────────────────────────────────────────────────────
-   View tabs (CV / Cover / Apps)
-   ───────────────────────────────────────────────────────────── */
-
-.view-tabs {
-  position: fixed;
-  top: 56px;
-  left: 0;
-  right: var(--inspector-w, 0px);
-  transform: none;
-  z-index: 90;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 4px;
-  background: var(--color-canvas);
-  border: none;
-  border-bottom: 1px solid var(--color-hairline);
-  border-radius: 0;
-  padding: 0 20px;
-  height: 48px;
-  box-shadow: none;
-}
-
-.view-tab {
-  height: 36px;
-  padding: 0 18px;
-  background: transparent;
-  border: none;
-  font: inherit;
-  font-size: 14px;
-  font-weight: 500;
-  color: var(--color-steel);
-  border-radius: var(--radius-md);
-  cursor: pointer;
-  transition: background-color 120ms ease, color 120ms ease;
-}
-.view-tab:hover {
-  background: var(--color-surface);
-  color: var(--color-ink);
-}
-.view-tab--active {
-  background: var(--color-ink-deep);
-  color: var(--color-on-dark);
-}
-.view-tab--active:hover {
-  background: var(--color-charcoal);
-  color: var(--color-on-dark);
-}
-
-/* ─────────────────────────────────────────────────────────────────
    Applications tracker
    ───────────────────────────────────────────────────────────── */
 
@@ -1089,7 +1135,8 @@ a:hover {
   width: var(--cv-page-w);
   min-height: var(--cv-page-h);
   background: var(--color-canvas);
-  box-shadow: var(--elev-3);
+  box-shadow: 0 30px 60px -20px rgba(15, 15, 15, 0.28),
+    0 8px 24px -8px rgba(15, 15, 15, 0.18);
   padding: 80px 90px 80px 120px;
   font-family: var(--font-sans);
   color: var(--color-ink);
@@ -1533,7 +1580,9 @@ a:hover {
     background: #fff;
   }
   .toolbar,
-  .inspector,
+  .side-mount,
+  .side-button,
+  .side-panel,
   .screen-only,
   .page-frame__breaks {
     display: none !important;
