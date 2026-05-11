@@ -1329,25 +1329,26 @@ a:hover {
   overflow: hidden;
 }
 
-/* Each .page-break is anchored to the page boundary (top = page-h * N)
-   and centered on it via translateY(-50%). The cream band is wide
-   enough (96px) that the bottom ~36px of page N and the top ~36px of
-   page N+1 sit hidden behind it — visually faking the per-page margins
-   that the single-canvas grid layout doesn't naturally provide. The
-   middle ~24px reads as the seam between two stacked pages, with thin
-   shadow edges on top and bottom — Word print-preview style. */
+/* PageFrame paginates the main column so each page has a real 36px
+   top + bottom margin. The empty zone between two consecutive pages
+   is therefore 72px tall (36px bottom margin of page N + 36px top
+   margin of page N+1), centered on the page boundary.
+   This .page-break overlay is 72px tall and centered on the boundary
+   via translateY(-50%), so it sits exactly over that empty zone and
+   paints the workspace cream over the cv-page background. Shadow
+   edges at top and bottom mark the two page edges — Word style. */
 .page-break {
   position: absolute;
   left: 0;
   right: 0;
-  height: 96px;
+  height: 72px;
   transform: translateY(-50%);
   background: var(--color-surface);
   box-shadow:
     0 -4px 10px -2px rgba(15, 15, 15, 0.10),
     0 4px 10px -2px rgba(15, 15, 15, 0.10),
-    inset 0 1px 0 rgba(15, 15, 15, 0.06),
-    inset 0 -1px 0 rgba(15, 15, 15, 0.06);
+    inset 0 1px 0 rgba(15, 15, 15, 0.07),
+    inset 0 -1px 0 rgba(15, 15, 15, 0.07);
 }
 
 /* ─────────────────────────────────────────────────────────────────
