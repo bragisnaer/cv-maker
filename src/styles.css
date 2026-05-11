@@ -709,24 +709,29 @@ a:hover {
   color: var(--cv-ink);
 }
 
-.cv-sidebar__header {
+/* Main-column document header (name + title). Sits at the top of
+   the right column; sidebar starts with the headshot directly. */
+.cv-main__header {
   display: flex;
   flex-direction: column;
   gap: 4px;
-  padding-bottom: 12px;
-  border-bottom: 1px solid color-mix(in srgb, var(--cv-ink) 18%, transparent);
+  padding-bottom: 14px;
+  margin-bottom: 4px;
+  border-bottom: 1px solid var(--color-hairline);
 }
-.cv-sidebar__name {
-  font-size: 22px;
+.cv-main__name {
+  font-size: 30px;
   font-weight: 700;
-  letter-spacing: -0.01em;
+  letter-spacing: -0.02em;
   margin: 0;
-  line-height: 1.15;
+  line-height: 1.05;
+  color: var(--color-ink);
 }
-.cv-sidebar__title {
-  font-size: 11.5px;
+.cv-main__title {
+  font-size: 13px;
   font-weight: 500;
-  color: color-mix(in srgb, var(--cv-ink) 70%, transparent);
+  color: var(--color-slate);
+  letter-spacing: 0.01em;
 }
 
 .cv-block {
@@ -1324,21 +1329,25 @@ a:hover {
   overflow: hidden;
 }
 
-/* Each .page-break sits at top: var(--cv-page-h) * N. The 28px gap
-   carries the workspace surface colour with shadows on the top and
-   bottom edges, simulating two stacked pages with a margin between
-   them — Word print-preview style. */
+/* Each .page-break is anchored to the page boundary (top = page-h * N)
+   and centered on it via translateY(-50%). The cream band is wide
+   enough (96px) that the bottom ~36px of page N and the top ~36px of
+   page N+1 sit hidden behind it — visually faking the per-page margins
+   that the single-canvas grid layout doesn't naturally provide. The
+   middle ~24px reads as the seam between two stacked pages, with thin
+   shadow edges on top and bottom — Word print-preview style. */
 .page-break {
   position: absolute;
-  left: -12px;
-  right: -12px;
-  height: 28px;
+  left: 0;
+  right: 0;
+  height: 96px;
+  transform: translateY(-50%);
   background: var(--color-surface);
   box-shadow:
-    0 -4px 8px -2px rgba(15, 15, 15, 0.08),
-    0 4px 8px -2px rgba(15, 15, 15, 0.08),
-    inset 0 1px 0 rgba(15, 15, 15, 0.05),
-    inset 0 -1px 0 rgba(15, 15, 15, 0.05);
+    0 -4px 10px -2px rgba(15, 15, 15, 0.10),
+    0 4px 10px -2px rgba(15, 15, 15, 0.10),
+    inset 0 1px 0 rgba(15, 15, 15, 0.06),
+    inset 0 -1px 0 rgba(15, 15, 15, 0.06);
 }
 
 /* ─────────────────────────────────────────────────────────────────

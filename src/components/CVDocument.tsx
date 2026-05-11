@@ -48,7 +48,6 @@ function CVSidebar({ data, readOnly }: { data: CVData; readOnly?: boolean }) {
   return (
     <aside className="cv-sidebar">
       <Headshot config={data.headshot} profileName={active} readOnly={readOnly} />
-      <SidebarHeader data={data} readOnly={readOnly} />
       <SidebarContact data={data} readOnly={readOnly} />
       {data.sidebar
         .filter((s) => s.visible)
@@ -64,13 +63,13 @@ function CVSidebar({ data, readOnly }: { data: CVData; readOnly?: boolean }) {
   );
 }
 
-function SidebarHeader({ data, readOnly }: { data: CVData; readOnly?: boolean }) {
+function MainHeader({ data, readOnly }: { data: CVData; readOnly?: boolean }) {
   const { updatePath } = useCVStore();
   return (
-    <header className="cv-sidebar__header">
+    <header className="cv-main__header">
       <EditableText
         as="h1"
-        className="cv-sidebar__name"
+        className="cv-main__name"
         value={data.name}
         onChange={(v) => updatePath(['name'], v)}
         readOnly={readOnly}
@@ -78,7 +77,7 @@ function SidebarHeader({ data, readOnly }: { data: CVData; readOnly?: boolean })
         ariaLabel="Name"
       />
       <EditableText
-        className="cv-sidebar__title"
+        className="cv-main__title"
         value={data.title}
         onChange={(v) => updatePath(['title'], v)}
         readOnly={readOnly}
@@ -448,6 +447,7 @@ function CVMain({ data, readOnly }: { data: CVData; readOnly?: boolean }) {
   const { updatePath, appendAt } = useCVStore();
   return (
     <main className="cv-main">
+      <MainHeader data={data} readOnly={readOnly} />
       <section className="cv-block">
         <EditableText
           as="h2"
